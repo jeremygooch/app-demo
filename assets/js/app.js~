@@ -1,0 +1,53 @@
+// Set up the scene, camera, and renderer as global variables.
+var scene, camera, renderer;
+
+// Sets up the scene.
+function init() {
+    // Create the scene and set the scene size.
+    scene = new THREE.Scene();
+    var WIDTH  = window.innerWidth,
+    HEIGHT = window.innerHeight;
+    
+    // Create a renderer and add it to the DOM.
+    renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(WIDTH, HEIGHT);
+    console.dir(document);
+    document.body.appendChild(renderer.domElement);
+
+
+    // Create a camera, zoom it out from the model a bit, and add it to the scene.
+    camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
+    camera.position.set(0,6,0);
+    scene.add(camera);
+
+
+    // Set the background color of the scene.
+    renderer.setClearColorHex(0x333F47, 1);
+ 
+    // Create a light, set its position, and add it to the scene.
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(-100,200,100);
+    scene.add(light);
+    
+
+
+    
+
+    // Create an event listener that resizes the renderer with the browser window.
+    window.addEventListener('resize', function() {
+	var WIDTH  = window.innerWidth,
+            HEIGHT = window.innerHeight;
+	renderer.setSize(WIDTH, HEIGHT);
+	camera.aspect = WIDTH / HEIGHT;
+	camera.updateProjectionMatrix();
+    });
+}
+
+
+
+
+
+
+ 
+init();
+animate();
