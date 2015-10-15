@@ -19,7 +19,7 @@
 
 		// Limits to how far you can dolly in and out ( PerspectiveCamera only )
 		this.minDistance = 0;
-		this.maxDistance = Infinity;
+		this.maxDistance = 50; // JG [ZOOM]: this.maxDistance = Infinity;
 
 		// Limits to how far you can zoom in and out ( OrthographicCamera only )
 		this.minZoom = 0;
@@ -28,12 +28,12 @@
 		// How far you can orbit vertically, upper and lower limits.
 		// Range is 0 to Math.PI radians.
 		this.minPolarAngle = 0; // radians
-		this.maxPolarAngle = Math.PI; // radians
+		this.maxPolarAngle = Math.PI/2; // radians JG [ROTATION u/d]: this.maxPolarAngle = Math.PI; // radians
 
 		// How far you can orbit horizontally, upper and lower limits.
 		// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-		this.minAzimuthAngle = - Infinity; // radians
-		this.maxAzimuthAngle = Infinity; // radians
+		this.minAzimuthAngle = - Math.PI/4.5; // radians
+		this.maxAzimuthAngle = Math.PI/2.5; // radians // JG [ROTATION l/r]
 
 		// Set to true to enable damping (inertia)
 		// If damping is enabled, you must call controls.update() in your animation loop

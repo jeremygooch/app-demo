@@ -1,5 +1,5 @@
 
-var container, stats, controls;
+var container, stats, controls, gui;
 var camera, scene, renderer, loader, clock, light;
 var skinnedMesh, animation, groundMaterial, planeGeometry;
 
@@ -7,9 +7,21 @@ init();
 animate();
 
 function init() {
-
     container = document.createElement( 'div' );
     document.body.appendChild( container );
+
+
+
+
+    window.addEventListener( 'start-animation', onStartAnimation );
+    // window.addEventListener( 'stop-animation', onStopAnimation );
+    window.addEventListener( 'pause-animation', onPauseAnimation );
+    // window.addEventListener( 'step-animation', onStepAnimation );
+    // window.addEventListener( 'weight-animation', onWeightAnimation );
+    // window.addEventListener( 'crossfade', onCrossfade );
+    // window.addEventListener( 'warp', onWarp );
+    // window.addEventListener( 'toggle-show-skeleton', onShowSkeleton );
+    // window.addEventListener( 'toggle-show-model', onShowModel );
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.set( 10, 0, 10 ); // (z/depth, y/up-down, x/left-right)
@@ -45,14 +57,13 @@ function init() {
     loader.load( './models/skinned/simple/simple.json', function ( geometry, materials ) {
 
 	for ( var k in materials ) {
-
 	    materials[k].skinning = true;
-
 	}
 
 	skinnedMesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
 	skinnedMesh.scale.set( 1, 1, 1 );
 
+	gui = new BlendCharacterGui(skinnedMesh.animations);
 	
 	scene.add( skinnedMesh );
 	animation = new THREE.Animation( skinnedMesh, skinnedMesh.geometry.animations[ 0 ] );
@@ -75,6 +86,9 @@ function animate() {
     stats.update();
 
 }
+
+function onStartAnimation(e) { animation.play(); }
+function onPauseAnimation(e) { animation.stop(); };
 
 function render() {
 
