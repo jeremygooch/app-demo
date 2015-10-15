@@ -1,71 +1,76 @@
-// Set up the scene, camera, and renderer as global variables.
-var scene, camera, renderer;
-
-init();
-animate();
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var clock = new THREE.Clock();
 
 
-// Sets up the scene.
-function init() {
-    // Create the scene and set the scene size.
-    scene = new THREE.Scene();
-    var WIDTH  = window.innerWidth,
-    HEIGHT = window.innerHeight;
-    
-    // Create a renderer and add it to the DOM.
-    renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(WIDTH, HEIGHT);
-    document.body.appendChild(renderer.domElement);
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
 
+// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+// var cube = new THREE.Mesh( geometry, material );
+// scene.add( cube );
 
-    // Create a camera, zoom it out from the model a bit, and add it to the scene.
-    camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
-    camera.position.set(0,6,0);
-    scene.add(camera);
+// Create a light, set its position, and add it to the scene.
+var light = new THREE.PointLight(0xffffff);
+light.position.set(-100,200,100);
+scene.add(light);
 
-    // Create an event listener that resizes the renderer with the browser window.
-    window.addEventListener('resize', function() {
-	var WIDTH  = window.innerWidth,
-            HEIGHT = window.innerHeight;
-	renderer.setSize(WIDTH, HEIGHT);
-	camera.aspect = WIDTH / HEIGHT;
-	camera.updateProjectionMatrix();
-    });
+// Load in the mesh and add it to the scene.
+// var loader = new THREE.JSONLoader();
+blendMesh = new THREE.BlendCharacter();
+blendMesh.load( "3d/animCipher.js", start );
 
-    // Set the background color of the scene.
-    // renderer.setClearColor( 0x333F47, 1);
-    renderer.setClearColorHex(0x333F47, 1);
- 
-    // Create a light, set its position, and add it to the scene.
-    var light = new THREE.PointLight(0xffffff);
-    light.position.set(-100,200,100);
-    scene.add(light);
-    
-    // Load in the mesh and add it to the scene.
-    var loader = new THREE.JSONLoader();
-    loader.load( "3d/smartphone.json", function(geometry){
-      var material = new THREE.MeshLambertMaterial({color: 0x55B663});
-      mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-    });
+var animation;
+// loader.load( "3d/animCipher.json", function(geometry, material){
+//     console.dir(THREE);
+//     material = new THREE.MeshLambertMaterial(material);
+//     // var material = new THREE.MeshLambertMaterial({color: 0x55B663});
+//     mesh = new THREE.Mesh(geometry, material);
+//     scene.add(mesh);
 
-    
+//     // add animation data to the animation handler
+//     // THREE.AnimationHandler.add(mesh.geometry.animation);
+//     // console.dir(mesh);
+//     // THREE.Animation(mesh.geometry.animations[0]);
 
-    // Add OrbitControls so that we can pan around with the mouse.
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-}
+//     // create animation
+//     animation = new THREE.Animation(
+// 	mesh,
+// 	geometry.animations[0]
+// 	// 'ArmatureAction',
+// 	// THREE.AnimationHandler.CATMULLROM
+//     );
 
-// Renders the scene and updates the render as needed.
-function animate() {
+//     // play the anim
+//     // animation.play();
 
-    // Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-    requestAnimationFrame(animate);
-    
-    // Render the scene.
+//     render();
+// });
+render();
+
+function render() {
+    // animation.update(.01);
+    var delta = 0.75 * clock.getDelta();
+    THREE.AnimationHandler.update(delta);
     renderer.render(scene, camera);
-    controls.update();
-
+    requestAnimationFrame(render);
 }
 
 
- 
+camera.position.z = 5;
+
+// Add OrbitControls so that we can pan around with the mouse.
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+// var render = function () {
+//     requestAnimationFrame( render );
+
+//     // mesh.rotation.x += 0.1;
+//     // mesh.rotation.y += 0.1;
+
+//     renderer.render(scene, camera);
+// };
+
+// render();
