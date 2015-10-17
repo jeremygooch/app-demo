@@ -19,7 +19,7 @@
 
 		// Limits to how far you can dolly in and out ( PerspectiveCamera only )
 		this.minDistance = 10;
-		this.maxDistance = 30; // JG [ZOOM]: this.maxDistance = Infinity;
+		this.maxDistance = 28; // JG [ZOOM]: this.maxDistance = Infinity;
 
 		// Limits to how far you can zoom in and out ( OrthographicCamera only )
 		this.minZoom = 0;
@@ -27,7 +27,7 @@
 
 		// How far you can orbit vertically, upper and lower limits.
 		// Range is 0 to Math.PI radians.
-		this.minPolarAngle = 0; // radians
+		this.minPolarAngle = Math.PI/3; // radians
 		this.maxPolarAngle = Math.PI/2; // radians JG [ROTATION u/d]: this.maxPolarAngle = Math.PI; // radians
 
 		// How far you can orbit horizontally, upper and lower limits.

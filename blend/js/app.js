@@ -31,7 +31,7 @@ function init() {
     clock = new THREE.Clock;
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setClearColor( 0x777777 );
+    renderer.setClearColor( 0x142400 );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild( renderer.domElement );
@@ -43,7 +43,7 @@ function init() {
     stats.domElement.style.top = '0px';
     container.appendChild(stats.domElement);
 
-    light = new THREE.HemisphereLight( 0xf2f2fe, 0x44412f, 1 );
+    light = new THREE.HemisphereLight( 0xfafff6, 0x142400, 1 );
     light.position.set( - 80, 500, 50 );
     scene.add( light );
 
@@ -66,8 +66,8 @@ function init() {
     // });
 
     var set = [
+	'background',
 	'phone',
-	'floor',
 	'base',
 	'support',
 	'wallBack',
@@ -75,7 +75,7 @@ function init() {
     ];
 
     for (var i=0; i<set.length; i++) {
-	loader.load( "models/skinned/simple/" + set[i] + ".json",  addElmentToScene);
+	loader.load( "js/json/" + set[i] + ".json",  addElmentToScene);
     }
     
     // loader.load( "models/skinned/simple/simple3.json", createPhone );
