@@ -18,8 +18,8 @@
 		this.target = new THREE.Vector3();
 
 		// Limits to how far you can dolly in and out ( PerspectiveCamera only )
-		this.minDistance = 0;
-		this.maxDistance = 50; // JG [ZOOM]: this.maxDistance = Infinity;
+		this.minDistance = 10;
+		this.maxDistance = 30; // JG [ZOOM]: this.maxDistance = Infinity;
 
 		// Limits to how far you can zoom in and out ( OrthographicCamera only )
 		this.minZoom = 0;
@@ -32,8 +32,9 @@
 
 		// How far you can orbit horizontally, upper and lower limits.
 		// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-		this.minAzimuthAngle = - Math.PI/4.5; // radians
-		this.maxAzimuthAngle = Math.PI/2.5; // radians // JG [ROTATION l/r]
+	    this.minAzimuthAngle = - .000001; // radians
+		//this.minAzimuthAngle = - Math.PI/25.5; // radians
+		this.maxAzimuthAngle = Math.PI/1.65; // radians // JG [ROTATION l/r]
 
 		// Set to true to enable damping (inertia)
 		// If damping is enabled, you must call controls.update() in your animation loop

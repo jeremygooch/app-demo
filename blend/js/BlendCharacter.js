@@ -21,13 +21,15 @@ THREE.BlendCharacter = function () {
 			THREE.SkinnedMesh.call( scope, geometry, originalMaterial );
 
 			// Create the animations
-
+		    // if (geometry.animations) {
+		    console.dir(geometry);
 			for ( var i = 0; i < geometry.animations.length; ++ i ) {
 
 				var animName = geometry.animations[ i ].name;
 				scope.animations[ animName ] = new THREE.Animation( scope, geometry.animations[ i ] );
 
 			}
+		    // }
 
 			// Loading is complete, fire the callback
 			if ( onLoad !== undefined ) onLoad();
