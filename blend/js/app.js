@@ -25,7 +25,7 @@ function init() {
     window.addEventListener( 'pause-animation', onPauseAnimation );
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.set( 20, 0, 10 ); // (z/depth, y/up-down, x/left-right)
+    camera.position.set( 500, 0, 500 ); // (z/depth, y/up-down, x/left-right)
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setClearColor( 0x142400 );
@@ -35,7 +35,8 @@ function init() {
 
     controls = new THREE.OrbitControls( camera );
     // Constrict the amount of movement the camera can do
-    controls.maxDistance	= 28;
+    controls.minDistance	= 250; // Zoom In
+    controls.maxDistance	= 1050; // Zoom Out
     controls.minPolarAngle	= Math.PI/3;
     controls.maxPolarAngle	= Math.PI/2;
     controls.minAzimuthAngle	= .000001;
@@ -95,6 +96,8 @@ function addElmentToScene( geometry, materials ) {
     materials[ 0 ].shading = THREE.FlatShading;
 
     mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+    // Increase the size since CSS will be at a much larger scale
+    mesh.scale.set(55,55,55);
     scene.add( mesh );
 
 }

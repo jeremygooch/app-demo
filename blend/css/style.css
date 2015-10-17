@@ -91,15 +91,15 @@ button:active {
 
 
 .three-div{
-    background: transparent;
+    background: transparent url(images/test.jpg) center no-repeat;
+    background-size: 100% auto;
     color: #E50000;
     font-family: Arial, Helvetica, Sans-serif;
-    /* font-size: .5em; */
-    /* padding: .5em; */
-    height: .5em;
-    width: .5em;
+    
+    height: 5em;
+    width: 5em;
     border: 1px solid #fff;
-    /* animation: fadeIn 1s infinite alternate; */
+    animation: fadeIn 1s infinite alternate;
 }
 
 
