@@ -92,8 +92,8 @@ button:active {
 
 .three-div {
     background: transparent;
-    /* background: url(images/test.jpg) center no-repeat; */
-    background-size: 100% auto;
+    /* background: url(images/test.jpg) top left no-repeat; */
+    /* background-size: 100% auto; */
     cursor: pointer;
     height: 5em;
     width: 5em;
