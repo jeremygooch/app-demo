@@ -16,39 +16,35 @@ function init() {
 
     /* Create the renderer and add it to the container */
     webglRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    webglRenderer.setClearColor( 0x142400 );
-    webglRenderer.setPixelRatio( window.devicePixelRatio );
-    webglRenderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild( webglRenderer.domElement );
+    webglRenderer.setClearColor(0x142400);
+    webglRenderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(webglRenderer.domElement);
 
+    /* Create and position the camera */
+    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
+    camera.position.set( 600, -10, 400 ); // (z/depth, y/up-down, x/left-right)
 
-    // camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera = new THREE.PerspectiveCamera( 45, container.clientWidth / container.clientHeight, 1, 10000 );
-    camera.position.set( 600, 0, 400 ); // (z/depth, y/up-down, x/left-right)
-
-    controls = new THREE.OrbitControls( camera );
-    // Constrict the amount of movement the camera can do
+    /* Setup the input controls and constrict their movement accordingly */
+    controls = new THREE.OrbitControls( camera, webglRenderer.domElement );
     controls.minDistance	= 250; // Zoom In
     controls.maxDistance	= 1050; // Zoom Out
-    controls.minPolarAngle	= Math.PI/2.5; // Vertical Rotate Up
+    // controls.minPolarAngle	= Math.PI/2.5; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
-    controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
-    controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
+    // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
+    // controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
 
+    /* Add Stats to the project */
     stats = new Stats();
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.top = '0px';
     container.appendChild(stats.domElement);
 
+    /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xfafff6, 0x142400, 1.6 );
     light.position.set( - 80, 500, 50 );
     webglScene.add( light );
 
-    var set = [
-	'background',
-	'phone',
-	'bench'
-    ];
+    var set = ['smartphone','floor'];
 
     for (var i=0; i<set.length; i++) {
 	loader.load( "js/json/" + set[i] + ".json",  addElmentToScene);
@@ -74,10 +70,21 @@ function init() {
     
     /* Create the renderer and add it to the container */
     cssRenderer = new THREE.CSS3DRenderer();
-    cssRenderer.setSize(container.clientWidth, container.clientHeight);
     cssRenderer.domElement.style.position = 'absolute';
     cssRenderer.domElement.style.top = 0;
     document.body.appendChild(cssRenderer.domElement);
+
+    /* Set all the sizes initially and on resize*/
+    onWindowResize();
+    window.addEventListener( 'resize', onWindowResize, false );
+}
+
+function onWindowResize() {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+
+    webglRenderer.setSize(container.clientWidth, container.clientHeight);
+    cssRenderer.setSize(container.clientWidth, container.clientHeight);
 }
 
 function addElmentToScene( geometry, materials ) {
@@ -86,7 +93,6 @@ function addElmentToScene( geometry, materials ) {
     // Increase the size since CSS will be at a much larger scale
     mesh.scale.set(55,55,55);
     webglScene.add( mesh );
-
 }
 
 function animate() {
@@ -101,5 +107,4 @@ function animate() {
 function render() {
     cssRenderer.render(cssScene, camera);
     webglRenderer.render( webglScene, camera );
-
 }
