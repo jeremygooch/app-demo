@@ -8,7 +8,7 @@ function init() {
     /* *********************************************************
      * WebGL Scene Setup
      ********************************************************* */
-    container = document.getElementById('container');
+    container = document.querySelector('.phoneContainer');
 
     webglScene = new THREE.Scene();
     loader = new THREE.JSONLoader();
@@ -18,11 +18,12 @@ function init() {
     webglRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     webglRenderer.setClearColor( 0x142400 );
     webglRenderer.setPixelRatio( window.devicePixelRatio );
-    webglRenderer.setSize(window.innerWidth, window.innerHeight);
+    webglRenderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild( webglRenderer.domElement );
 
 
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+    // camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+    camera = new THREE.PerspectiveCamera( 45, container.clientWidth / container.clientHeight, 1, 10000 );
     camera.position.set( 600, 0, 400 ); // (z/depth, y/up-down, x/left-right)
 
     controls = new THREE.OrbitControls( camera );
@@ -73,7 +74,7 @@ function init() {
     
     /* Create the renderer and add it to the container */
     cssRenderer = new THREE.CSS3DRenderer();
-    cssRenderer.setSize(window.innerWidth, window.innerHeight);
+    cssRenderer.setSize(container.clientWidth, container.clientHeight);
     cssRenderer.domElement.style.position = 'absolute';
     cssRenderer.domElement.style.top = 0;
     document.body.appendChild(cssRenderer.domElement);
