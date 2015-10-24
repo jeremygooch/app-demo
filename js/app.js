@@ -22,12 +22,12 @@ function init() {
 
     /* Create and position the camera */
     camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
-    camera.position.set( 600, -10, 400 ); // (z/depth, y/up-down, x/left-right)
+    camera.position.set( 500, 0, 300 ); // (z/depth, y/up-down, x/left-right)
 
     /* Setup the input controls and constrict their movement accordingly */
     controls = new THREE.OrbitControls( camera, webglRenderer.domElement );
-    controls.minDistance	= 250; // Zoom In
-    controls.maxDistance	= 1050; // Zoom Out
+    controls.minDistance	= 500; // Zoom In
+    controls.maxDistance	= 750; // Zoom Out
     // controls.minPolarAngle	= Math.PI/2.5; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
@@ -49,6 +49,9 @@ function init() {
     for (var i=0; i<set.length; i++) {
 	loader.load( "js/json/" + set[i] + ".json",  addElmentToScene);
     }
+
+    // console.log(webglScene);
+    // camera.lookAt(objects.normal.webglScene.position);
     
     /* *********************************************************
      * CSS Scene Setup
