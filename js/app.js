@@ -1,34 +1,29 @@
-var container, stats, controls, gui;
-var camera, scene, renderer, renderer2, loader, clock, light;
-var skinnedMesh, animation, groundMaterial, planeGeometry;
-var smartphone;
-var objects = [];
-var targets = { table: [], sphere: [], helix: [], grid: [] };
+var container, stats, controls;
+var camera, webglScene, cssScene, webglRenderer, cssRenderer, loader, clock, light;
 
 init();
 animate();
 
 function init() {
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
+    /* *********************************************************
+     * WebGL Scene Setup
+     ********************************************************* */
+    container = document.getElementById('container');
 
-    scene = new THREE.Scene();
+    webglScene = new THREE.Scene();
     loader = new THREE.JSONLoader();
     clock = new THREE.Clock;
 
+    /* Create the renderer and add it to the container */
+    webglRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    webglRenderer.setClearColor( 0x142400 );
+    webglRenderer.setPixelRatio( window.devicePixelRatio );
+    webglRenderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild( webglRenderer.domElement );
 
-
-    window.addEventListener( 'start-animation', onStartAnimation );
-    window.addEventListener( 'pause-animation', onPauseAnimation );
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.set( 600, 0, 400 ); // (z/depth, y/up-down, x/left-right)
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setClearColor( 0x142400 );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild( renderer.domElement );
 
     controls = new THREE.OrbitControls( camera );
     // Constrict the amount of movement the camera can do
@@ -46,7 +41,7 @@ function init() {
 
     light = new THREE.HemisphereLight( 0xfafff6, 0x142400, 1.6 );
     light.position.set( - 80, 500, 50 );
-    scene.add( light );
+    webglScene.add( light );
 
     var set = [
 	'background',
@@ -58,33 +53,30 @@ function init() {
 	loader.load( "js/json/" + set[i] + ".json",  addElmentToScene);
     }
     
-    // /////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////
+    /* *********************************************************
+     * CSS Scene Setup
+     ********************************************************* */
     
-    //CSS3D Scene
-    scene2 = new THREE.Scene();
+    cssScene = new THREE.Scene();
     
-    //HTML
     element = document.createElement('div');
-    // element.innerHTML = 'Plain text inside a div.';
     element.className = 'three-div';
     
-    //CSS Object
+    /* Turn the div into a three.js oject */
     div = new THREE.CSS3DObject(element);
     div.position.x = 0;
     div.position.y = 0;
     div.position.z = -5;
 
     div.rotation.y = Math.PI/2;
-    scene2.add(div);
+    cssScene.add(div);
     
-    //CSS3D Renderer
-    renderer2 = new THREE.CSS3DRenderer();
-    renderer2.setSize(window.innerWidth, window.innerHeight);
-    renderer2.domElement.style.position = 'absolute';
-    renderer2.domElement.style.top = 0;
-    document.body.appendChild(renderer2.domElement);
+    /* Create the renderer and add it to the container */
+    cssRenderer = new THREE.CSS3DRenderer();
+    cssRenderer.setSize(window.innerWidth, window.innerHeight);
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = 0;
+    document.body.appendChild(cssRenderer.domElement);
 }
 
 function addElmentToScene( geometry, materials ) {
@@ -92,7 +84,7 @@ function addElmentToScene( geometry, materials ) {
     mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
     // Increase the size since CSS will be at a much larger scale
     mesh.scale.set(55,55,55);
-    scene.add( mesh );
+    webglScene.add( mesh );
 
 }
 
@@ -105,11 +97,8 @@ function animate() {
     controls.update();
 }
 
-function onStartAnimation(e) { animation.play(); }
-function onPauseAnimation(e) { animation.stop(); };
-
 function render() {
-    renderer2.render(scene2, camera);
-    renderer.render( scene, camera );
+    cssRenderer.render(cssScene, camera);
+    webglRenderer.render( webglScene, camera );
 
 }
