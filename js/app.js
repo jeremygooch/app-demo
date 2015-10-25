@@ -16,7 +16,7 @@ function init() {
 
     /* Create the renderer and add it to the container */
     webglRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    webglRenderer.setClearColor(0x142400);
+    webglRenderer.setClearColor(0x267c9c);
     webglRenderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(webglRenderer.domElement);
 
@@ -49,6 +49,8 @@ function init() {
     for (var i=0; i<set.length; i++) {
 	loader.load( "js/json/" + set[i] + ".json",  addElmentToScene);
     }
+
+    // webglScene.fog = new THREE.FogExp2( 0x267c9c, 0.00095 );
 
     // console.log(webglScene);
     // camera.lookAt(objects.normal.webglScene.position);
