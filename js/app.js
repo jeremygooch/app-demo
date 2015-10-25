@@ -28,7 +28,7 @@ function init() {
     controls = new THREE.OrbitControls( camera, webglRenderer.domElement );
     controls.minDistance	= 500; // Zoom In
     controls.maxDistance	= 750; // Zoom Out
-    // controls.minPolarAngle	= Math.PI/2.5; // Vertical Rotate Up
+    controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
     // controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
@@ -40,7 +40,7 @@ function init() {
     container.appendChild(stats.domElement);
 
     /* Create and add the lights*/
-    light = new THREE.HemisphereLight( 0xfafff6, 0x142400, 1.6 );
+    light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
     light.position.set( - 80, 500, 50 );
     webglScene.add( light );
 
