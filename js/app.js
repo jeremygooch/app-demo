@@ -28,7 +28,7 @@ function init() {
     controls = new THREE.OrbitControls( camera, webglRenderer.domElement );
     controls.minDistance	= 500; // Zoom In
     controls.maxDistance	= 750; // Zoom Out
-    controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
+    // controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
     // controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
@@ -75,6 +75,7 @@ function init() {
     
     /* Create the renderer and add it to the container */
     cssRenderer = new THREE.CSS3DRenderer();
+    cssRenderer.setSize( container.clientWidth, container.clientHeight );
     cssRenderer.domElement.style.position = 'absolute';
     cssRenderer.domElement.style.top = 0;
     document.body.appendChild(cssRenderer.domElement);
