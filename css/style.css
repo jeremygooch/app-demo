@@ -21,7 +21,7 @@
 
 
 
-.three-div {
+.cmLoading {
     background: transparent;
     /* background: url(images/test.jpg) top left no-repeat; */
     /* background-size: 100% auto; */
@@ -29,15 +29,14 @@
     height: 5em;
     width: 5em;
     border: 1px solid #fff;
-    animation: fadeIn 1s infinite alternate;
+    /* animation: spin 1s infinite; */
     z-index: 1;
 }
 
-.three-div:hover {
+.cmLoading:hover {
     border: 1px solid #56a8e8;
     background: rgba(255,255,255,.25);
 }
-
 
 
 @keyframes fadeIn { 
