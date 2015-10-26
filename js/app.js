@@ -44,10 +44,10 @@ function init() {
     light.position.set( - 80, 500, 50 );
     sceneGL.add( light );
 
-    var set = ['smartphone','floor'];
+    var setGL = ['smartphone','floor'];
 
-    for (var i=0; i<set.length; i++) {
-	loader.load( "js/json/" + set[i] + ".json", addElementToScene);
+    for (var i=0; i<setGL.length; i++) {
+	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
     // console.log(sceneGL);
@@ -58,20 +58,26 @@ function init() {
      ********************************************************* */
     
     sceneCSS = new THREE.Scene();
-    
-    element = document.createElement('div');
-    element.className = 'cmLoading';
-    
-    /* Turn the div into a three.js oject */
-    div = new THREE.CSS3DObject(element);
-    div.position.x = 0;
-    div.position.y = 0;
-    div.position.z = 0;
 
-    div.rotation.x = -Math.PI/1.1;
+    var setCSS = ['cmLoading'],
+        elm = [], div = {};
 
-    console.dir(div);
-    sceneCSS.add(div);
+    for (i=0; i<setCSS.length; i++)  {
+	elm[i] = document.createElement('div');
+	elm[i].className = setCSS[i];
+	
+	/* Turn the div into a three.js oject */
+	div[setCSS[i]] = new THREE.CSS3DObject(elm[i]);
+	div[setCSS[i]].position.x = 0;
+	div[setCSS[i]].position.y = -30;
+	div[setCSS[i]].position.z = 40;
+
+	div[setCSS[i]].rotation.x = -Math.PI/1.09;
+
+	sceneCSS.add(div[setCSS[i]]);
+    }
+    
+
     
     /* Create the renderer and add it to the container */
     rendererCSS = new THREE.CSS3DRenderer();
