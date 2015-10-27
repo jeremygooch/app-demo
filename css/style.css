@@ -22,22 +22,27 @@
 
 /* JS will be used to set animation timing */
 .cmLoading {
-    background: transparent;
-    /* background: url(images/test.jpg) top left no-repeat; */
-    /* background-size: 100% auto; */
+    background: url(images/cmLoading.png) center no-repeat;
+    background-size: 100% auto;
     cursor: pointer;
     height: 4em;
     width: 4em;
-    border: 1px solid #fff;
     animation: cmLoading 1s forwards paused;
     -webkit-animation: cmLoading 1s forwards paused;
     z-index: 1;
 }
 
-.cmLoading:hover {
-    border: 1px solid #56a8e8;
-    background: rgba(255,255,255,.25);
+.cmLoading_frames {
+    background: url(images/cmLoading_frames.png) center no-repeat;
+    background-size: 100% auto;
+    cursor: pointer;
+    height: 4em;
+    width: 4em;
+    animation: cmLoading 1s forwards paused;
+    -webkit-animation: cmLoading 1s forwards paused;
+    z-index: 1;
 }
+
 
 
 @keyframes cmLoading { 
@@ -58,6 +63,6 @@
   }
   to {
       opacity: 100;
-      height: 12em; width: 12em;
+      height: 12.5em; width: 12.5em;
   }
 }

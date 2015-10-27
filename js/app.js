@@ -59,13 +59,13 @@ function init() {
     
     sceneCSS = new THREE.Scene();
 
-    var setCSS = ['cmLoading'],
+    var setCSS = ['cmLoading','cmLoading_frames'],
         elm = [], div = {};
 
     for (i=0; i<setCSS.length; i++)  {
 	elm[i] = document.createElement('div');
 	elm[i].className = setCSS[i];
-	
+	console.dir(elm[i]);
 	/* Turn the div into a three.js oject */
 	div[setCSS[i]] = new THREE.CSS3DObject(elm[i]);
 	div[setCSS[i]].position.x = 0;
@@ -115,9 +115,11 @@ function animateCSS(item, div) {
     var position, target, tween,
         speed = 700, delay = 400;
     switch (item) {
+    case "cmLoading_frames":
+	target = {x:0, y:-30, z:-45};
     case "cmLoading":
 	position = {x:0, y:-30, z:40};
-	target = {x:0, y:-30, z:-40};
+	target = (target) ? target : {x:0, y:-30, z:-40};
 	
 	setTimeout(function() {
 	    tween = new TWEEN.Tween(position).to(target, speed);
@@ -133,8 +135,6 @@ function animateCSS(item, div) {
 	    div.cmLoading.element.style['-webkit-animation-play-state'] = 'running';
 	    div.cmLoading.element.style['animation-play-state'] = 'running';
 
-	    console.dir(TWEEN.Easing);
-	    
 	    tween.start();
 	}, delay);
     default :
