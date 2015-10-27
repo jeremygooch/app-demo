@@ -2,7 +2,7 @@ var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 
 init();
-animate();
+initAnim();
 
 function init() {
     /* *********************************************************
@@ -75,9 +75,10 @@ function init() {
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
 	sceneCSS.add(div[setCSS[i]]);
+	animateCSS(setCSS[i], div);
     }
-    
 
+    
     
     /* Create the renderer and add it to the container */
     rendererCSS = new THREE.CSS3DRenderer();
@@ -110,12 +111,44 @@ function addElementToScene( geometry, materials  ) {
     sceneGL.add(mesh);
 }
 
-function animate() {
-    requestAnimationFrame( animate );
+function animateCSS(item, div) {
+    var position, target, tween,
+        speed = 700, delay = 400;
+    switch (item) {
+    case "cmLoading":
+	position = {x:0, y:-30, z:40};
+	target = {x:0, y:-30, z:-40};
+	
+	setTimeout(function() {
+	    tween = new TWEEN.Tween(position).to(target, speed);
+
+	    tween.onUpdate(function(){
+		div[item].position.x = position.x;
+		div[item].position.y = position.y;
+		div[item].position.z = position.z;
+	    });
+	    div.cmLoading.element.style['-webkit-animation-duration'] = speed;
+	    div.cmLoading.element.style['animation-duration'] = speed;
+	    // Start the animation
+	    div.cmLoading.element.style['-webkit-animation-play-state'] = 'running';
+	    div.cmLoading.element.style['animation-play-state'] = 'running';
+
+	    console.dir(TWEEN.Easing);
+	    
+	    tween.start();
+	}, delay);
+    default :
+	break;
+    };
+}
+
+function initAnim() {
+    requestAnimationFrame(initAnim);
     THREE.AnimationHandler.update( clock.getDelta() );
 
     render();
     stats.update();
+    TWEEN.update();
     controls.update();
 }
 
