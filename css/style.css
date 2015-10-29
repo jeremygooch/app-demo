@@ -27,8 +27,8 @@
     cursor: pointer;
     height: 4em;
     width: 4em;
-    animation: cmLoading 1s forwards paused;
-    -webkit-animation: cmLoading 1s forwards paused;
+    animation: cmLoading 1s ease-out forwards paused;
+    -webkit-animation: cmLoading 1s ease-out forwards paused;
     z-index: 1;
 }
 
@@ -36,10 +36,10 @@
     background: url(images/cmLoading_frames.png) center no-repeat;
     background-size: 100% auto;
     cursor: pointer;
-    height: 4em;
-    width: 4em;
-    animation: cmLoading 1s forwards paused;
-    -webkit-animation: cmLoading 1s forwards paused;
+    height: 12.5em;
+    width: 12.5em;
+    animation: cmLoading_frames 1s forwards paused;
+    -webkit-animation: cmLoading_frames 1s forwards paused;
     z-index: 1;
 }
 
@@ -52,7 +52,21 @@
   }
   to {
       opacity: 100;
-      height: 12em; width: 12em;
+      height: 12.5em; width: 12.5em;
+  }
+}
+@keyframes cmLoading_frames { 
+  0% {
+      opacity: 0;
+      height: 4em; width: 4em;
+  }
+  70% {
+      opacity: .7;
+      height: 5.5em; width: 5.5em;
+  }
+  100% {
+      opacity: 100;
+      height: 12.5em; width: 12.5em;
   }
 }
 

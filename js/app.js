@@ -59,7 +59,8 @@ function init() {
     
     sceneCSS = new THREE.Scene();
 
-    var setCSS = ['cmLoading','cmLoading_frames'],
+    // var setCSS = ['cmLoading','cmLoading_frames'],
+    var setCSS = ['cmLoading'],
         elm = [], div = {};
 
     for (i=0; i<setCSS.length; i++)  {
@@ -112,30 +113,44 @@ function addElementToScene( geometry, materials  ) {
 }
 
 function animateCSS(item, div) {
-    var position, target, tween,
-        speed = 700, delay = 400;
+    var position, target, objName,
+        speed = 950, delay = 650;
     switch (item) {
-    case "cmLoading_frames":
-	target = {x:0, y:-30, z:-45};
+    // case "cmLoading_frames":
+    // 	objName = 'cmLoading_frames';
+    // 	target = {x:0, y:-30, z:-45};
+    // 	speed = speed + (speed/7);
     case "cmLoading":
+	objName = objName ? objName : 'cmLoading';
 	position = {x:0, y:-30, z:40};
+	rotation = {x: -Math.PI/1.09, y:0, z:0};
+	targetRotation = {x: -Math.PI/1.09, y:0, z:1.8};
 	target = (target) ? target : {x:0, y:-30, z:-40};
 	
 	setTimeout(function() {
-	    tween = new TWEEN.Tween(position).to(target, speed);
+	    var flyOut	 = new TWEEN.Tween(position).to(target, speed);
+	    var rotation = new TWEEN.Tween(div[objName].rotation).to(targetRotation, speed+(speed/2));
 
-	    tween.onUpdate(function(){
-		div[item].position.x = position.x;
-		div[item].position.y = position.y;
-		div[item].position.z = position.z;
+	    flyOut.onUpdate(function(){
+	    	div[item].position.x = position.x;
+	    	div[item].position.y = position.y;
+	    	div[item].position.z = position.z;
 	    });
-	    div.cmLoading.element.style['-webkit-animation-duration'] = speed;
-	    div.cmLoading.element.style['animation-duration'] = speed;
-	    // Start the animation
-	    div.cmLoading.element.style['-webkit-animation-play-state'] = 'running';
-	    div.cmLoading.element.style['animation-play-state'] = 'running';
 
-	    tween.start();
+	    rotation.easing(TWEEN.Easing.Quadratic.InOut);
+
+	    rotation.repeat(Infinity).yoyo(true);
+
+	    flyOut.easing(TWEEN.Easing.Quadratic.Out);
+	    
+	    div[objName].element.style['-webkit-animation-duration'] = speed;
+	    div[objName].element.style['animation-duration'] = speed;
+	    // Start the animation
+	    div[objName].element.style['-webkit-animation-play-state'] = 'running';
+	    div[objName].element.style['animation-play-state'] = 'running';
+
+	    flyOut.start();
+	    rotation.start();
 	}, delay);
     default :
 	break;
