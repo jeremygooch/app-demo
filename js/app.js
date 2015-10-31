@@ -143,32 +143,41 @@ function animateCSS(item, div) {
 	break;
     case "cmLoading":
 	var objName = 'cmLoading';
-	var position = {x:0, y:-30, z:40};
-	var rotation = {x: -Math.PI/1.09, y:0, z:0};
-	var targetRotation = {x: -Math.PI/1.09, y:0, z:1.8};
-	var targetPosition = {x:0, y:-30, z:-40};
+	var pos = {
+	    start: {x:0, y:-30, z:40},
+	    finish: {x:0, y:-30, z:-40},
+	    // finish: {x:0, y:-30, z:-30},
+	    reverse: {x:0, y:-30, z:-20},
+	    finale: {x:0, y:-30, z:-35}
+	};
 	
 	setTimeout(function() {
-	    var flyOut	 = new TWEEN.Tween(position).to(targetPosition, speed);
-	    // var rotation = new TWEEN.Tween(div[objName].rotation).to(targetRotation, speed*6);
+	    var update = {
+		flyOut:		function(){ div[item].position.z = pos.start.z; },
+		reverse:	function(){ div[item].position.z = pos.finish.z; },
+		finale:		function(){ div[item].position.z = pos.reverse.z; }
+	    };
 
-	    flyOut.onUpdate(function(){
-	    	div[item].position.x = position.x;
-	    	div[item].position.y = position.y;
-	    	div[item].position.z = position.z;
-	    });
+	    var flyOut	= new TWEEN.Tween(pos.start).to(pos.finish, speed)
+		.easing(TWEEN.Easing.Cubic.Out)
+		.onUpdate(update.flyOut);
 
-	    // rotation.easing(TWEEN.Easing.Quadratic.InOut);
+	    var reverse = new TWEEN.Tween(pos.finish).to(pos.reverse, speed*4)
+		.easing(TWEEN.Easing.Cubic.Out)
+		.onUpdate(update.reverse);
 
-	    // rotation.repeat(Infinity).yoyo(true);
-
-	    flyOut.easing(TWEEN.Easing.Quadratic.Out);
+	    var finale  = new TWEEN.Tween(pos.reverse).to(pos.finale, speed*3.5)
+		.easing(TWEEN.Easing.Quadratic.InOut)
+		.yoyo(true)
+		.repeat(Infinity)
+		.onUpdate(update.finale);
+	    
+	    flyOut.chain(reverse).chain(finale);
+	    
 	    
 	    div[objName].element.style['-webkit-animation-duration'] = speed;
 	    div[objName].element.style['animation-duration'] = speed;
 	    // Start the animation
-	    console.log('cmLoading');
-	    console.dir(div[objName]);
 	    div[objName].element.style['-webkit-animation-play-state'] = 'running';
 	    div[objName].element.style['animation-play-state'] = 'running';
 
