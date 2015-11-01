@@ -18,6 +18,13 @@ function init() {
     rendererGL = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     rendererGL.setClearColor(0x267c9c);
     rendererGL.setPixelRatio(window.devicePixelRatio);
+
+    /* Add Stats to the project */
+    stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.top = '0px';
+    container.appendChild(stats.domElement);
+
     container.appendChild(rendererGL.domElement);
 
     var replayBtn = document.createElement('div'),
@@ -44,12 +51,6 @@ function init() {
     // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
     // controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
 
-    /* Add Stats to the project */
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.top = '0px';
-    container.appendChild(stats.domElement);
-
     /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
     light.position.set( - 80, 500, 50 );
@@ -70,26 +71,7 @@ function init() {
     
     sceneCSS = new THREE.Scene();
 
-    var setCSS = ['cmLoading','cmLoading_frames'],
-        elm = [], div = {};
-
-    for (i=0; i<setCSS.length; i++)  {
-	elm[i] = document.createElement('div');
-	elm[i].className = setCSS[i];
-	console.dir(elm[i]);
-	/* Turn the div into a three.js oject */
-	div[setCSS[i]] = new THREE.CSS3DObject(elm[i]);
-	div[setCSS[i]].position.x = 0;
-	div[setCSS[i]].position.y = -30;
-	div[setCSS[i]].position.z = 40;
-
-	div[setCSS[i]].rotation.x = -Math.PI/1.09;
-
-	sceneCSS.add(div[setCSS[i]]);
-	animateCSS(setCSS[i], div);
-    }
-
-    
+    constructCSS();
     
     /* Create the renderer and add it to the container */
     rendererCSS = new THREE.CSS3DRenderer();
@@ -114,7 +96,39 @@ function onWindowResize() {
 }
 
 function onReplay() {
+    console.log('replay');
+    constructCSS();
+};
 
+function constructCSS() {
+    var setCSS = ['cmLoading','cmLoading_frames'];
+
+    /* Destroy all previous css elements */
+    var selectedObj;
+    for (var i=0; i<setCSS.length; i++){
+	selectedObj = sceneCSS.getObjectByName(setCSS[i]);
+	sceneCSS.remove(selectedObj);
+    }
+
+    /* Create new css elements*/
+    var elm = [], div = {};    
+    for (var i=0; i<setCSS.length; i++)  {
+	elm[i] = document.createElement('div');
+	elm[i].className = setCSS[i];
+
+	/* Turn the div into a three.js oject */
+	div[setCSS[i]] = new THREE.CSS3DObject(elm[i]);
+	div[setCSS[i]].name = setCSS[i];
+
+	div[setCSS[i]].position.x = 0;
+	div[setCSS[i]].position.y = -30;
+	div[setCSS[i]].position.z = 40;
+
+	div[setCSS[i]].rotation.x = -Math.PI/1.09;
+
+	sceneCSS.add(div[setCSS[i]]);
+	animateCSS(setCSS[i], div);
+    }
 }
 
 function addElementToScene( geometry, materials  ) {
@@ -136,7 +150,6 @@ function animateCSS(item, div) {
 	var targetPosition = {x:0, y:-30, z:-45};
 	
 	setTimeout(function() {
-	    console.dir(div);
 	    var loadingFrames = new TWEEN.Tween(position).to(targetPosition, speed);
 
 	    loadingFrames.onUpdate(function(){
