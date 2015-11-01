@@ -20,6 +20,17 @@ function init() {
     rendererGL.setPixelRatio(window.devicePixelRatio);
     container.appendChild(rendererGL.domElement);
 
+    var replayBtn = document.createElement('div'),
+    docs = document.createElement('div');
+    replayBtn.className = 'replayBtn';
+    docs.className = 'docs';
+    replayBtn.innerHTML = 'Replay Intro ->';
+    docs.innerHTML = '# Drag the mouse to rotate scene';
+    container.appendChild(docs);
+    container.appendChild(replayBtn);
+
+    replayBtn.addEventListener( 'click', onReplay, false );
+
     /* Create and position the camera */
     camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
     camera.position.set( 300, 0, -500 ); // (z/depth, y/up-down, x/left-right)
@@ -102,6 +113,10 @@ function onWindowResize() {
     rendererCSS.setSize(container.clientWidth, container.clientHeight);
 }
 
+function onReplay() {
+
+}
+
 function addElementToScene( geometry, materials  ) {
     materials[ 0 ].shading = THREE.FlatShading;
     mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
@@ -146,7 +161,6 @@ function animateCSS(item, div) {
 	var pos = {
 	    start: {x:0, y:-30, z:40},
 	    finish: {x:0, y:-30, z:-40},
-	    // finish: {x:0, y:-30, z:-30},
 	    reverse: {x:0, y:-30, z:-20},
 	    finale: {x:0, y:-30, z:-35}
 	};

@@ -19,14 +19,32 @@
 }
 
 
+/* *********************** */
+/* Canvas Elements         */
+/* *********************** */
+
+.replayBtn, .docs {
+    font-size: .75rem;
+    display: inline-block;
+    padding: 0 .5em;
+    margin-top: -2.5em;
+    z-index: 1;
+    position: relative;
+    color: #fff;
+    opacity: .5;
+}
+.docs { float: left; }
+.replayBtn {
+    float: right;
+    cursor: pointer;
+}
+.replayBtn:hover { opacity: .75; }
 
 /* JS will be used to set animation timing */
 .cmLoading {
     background: url(images/cmLoading_glow_frames.png) left center no-repeat;
     background-size: auto 100%;
     cursor: pointer;
-    /* height: 4em; */
-    /* width: 4em; */
     animation: cmLoading 1s ease-out forwards paused,
     cmLoading_glow_frames .5s infinite paused steps(5);
     -webkit-animation: cmLoading 1s ease-out forwards paused,
