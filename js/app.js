@@ -96,11 +96,10 @@ function onWindowResize() {
 }
 
 function onReplay() {
-    console.log('replay');
-    constructCSS();
+    constructCSS(true);
 };
 
-function constructCSS() {
+function constructCSS(replay) {
     var setCSS = ['cmLoading','cmLoading_frames'];
 
     /* Destroy all previous css elements */
@@ -127,7 +126,7 @@ function constructCSS() {
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
 	sceneCSS.add(div[setCSS[i]]);
-	animateCSS(setCSS[i], div);
+	animateCSS(setCSS[i], div, replay);
     }
 }
 
@@ -140,33 +139,43 @@ function addElementToScene( geometry, materials  ) {
     sceneGL.add(mesh);
 }
 
-function animateCSS(item, div) {
-    var speed = 950, delay = 650;
+function animateCSS(item, div, replay) {
+    var speed = 950, delay = !replay ? 650 : 0;
+
+    function beginAnimation(div) {
+	div.element.style['-webkit-animation-duration']		= speed;
+	div.element.style['animation-duration']			= speed;
+	div.element.style['-webkit-animation-play-state']	= 'running';
+	div.element.style['animation-play-state']		= 'running';
+    }
+
     switch (item) {
     case "cmLoading_frames":
     	speed = speed + (speed/7);
 	var objName = 'cmLoading_frames';
-	var position = {x:0, y:-30, z:40};
-	var targetPosition = {x:0, y:-30, z:-45};
+	var pos = {
+	    moveStart:		{x:0, y:-30, z:60},
+	    moveFinish:		{x:0, y:-30, z:-45},
+	    rotateStart:	{x:-Math.PI/1.09, y:0, z:0},
+	    rotateFinish:	{x:-Math.PI/1.09, y:0, z:5}
+	};
 	
 	setTimeout(function() {
-	    var loadingFrames = new TWEEN.Tween(position).to(targetPosition, speed);
+	    var update = {
+		moveOut:	function(){ div[item].position.z = pos.moveStart.z; },
+		rotation:	function(){ div[item].rotation.z = pos.rotateStart.z; }
+	    };
+	    var moveOut = new TWEEN.Tween(pos.moveStart).to(pos.moveFinish, speed)
+		.easing(TWEEN.Easing.Quadratic.Out)
+		.onUpdate(update.moveOut)
+		.start();
 
-	    loadingFrames.onUpdate(function(){
-	    	div[item].position.x = position.x;
-	    	div[item].position.y = position.y;
-	    	div[item].position.z = position.z;
-	    });
+	    var rotation = new TWEEN.Tween(pos.rotateStart).to(pos.rotateFinish, speed)
+		.easing(TWEEN.Easing.Linear.None)
+		.onUpdate(update.rotation)
+		.start();
 
-	    loadingFrames.easing(TWEEN.Easing.Quadratic.Out);
-	    
-	    div[objName].element.style['-webkit-animation-duration'] = speed;
-	    div[objName].element.style['animation-duration'] = speed;
-	    // Start the animation
-	    div[objName].element.style['-webkit-animation-play-state'] = 'running';
-	    div[objName].element.style['animation-play-state'] = 'running';
-
-	    loadingFrames.start();
+	    beginAnimation(div[objName]);
 	}, delay);
 	break;
     case "cmLoading":
@@ -199,17 +208,9 @@ function animateCSS(item, div) {
 		.repeat(Infinity)
 		.onUpdate(update.finale);
 	    
-	    flyOut.chain(reverse).chain(finale);
+	    flyOut.chain(reverse).chain(finale).start();;
 	    
-	    
-	    div[objName].element.style['-webkit-animation-duration'] = speed;
-	    div[objName].element.style['animation-duration'] = speed;
-	    // Start the animation
-	    div[objName].element.style['-webkit-animation-play-state'] = 'running';
-	    div[objName].element.style['animation-play-state'] = 'running';
-
-	    flyOut.start();
-	    // rotation.start();
+	    beginAnimation(div[objName]);
 	}, delay);
 	break;
     default :
