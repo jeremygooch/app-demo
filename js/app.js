@@ -198,17 +198,17 @@ function animateCSS(item, div, replay) {
 		.easing(TWEEN.Easing.Cubic.Out)
 		.onUpdate(update.flyOut);
 
-	    var reverse = new TWEEN.Tween(pos.finish).to(pos.reverse, speed*4)
-		.easing(TWEEN.Easing.Cubic.Out)
+	    var reverse = new TWEEN.Tween(pos.finish).to(pos.reverse, speed)
+		.easing(TWEEN.Easing.Cubic.InOut)
 		.onUpdate(update.reverse);
 
 	    var finale  = new TWEEN.Tween(pos.reverse).to(pos.finale, speed*3.5)
-		.easing(TWEEN.Easing.Quadratic.InOut)
+		.easing(TWEEN.Easing.Quadratic.Out)
 		.yoyo(true)
 		.repeat(Infinity)
 		.onUpdate(update.finale);
 	    
-	    flyOut.chain(reverse).chain(finale).start();;
+	    flyOut.chain(reverse.chain(finale)).start();
 	    
 	    beginAnimation(div[objName]);
 	}, delay);
