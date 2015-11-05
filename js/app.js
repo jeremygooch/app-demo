@@ -198,7 +198,7 @@ function animateCSS(item, div, replay) {
 		.easing(TWEEN.Easing.Cubic.Out)
 		.onUpdate(update.flyOut);
 
-	    var reverse = new TWEEN.Tween(pos.finish).to(pos.reverse, speed)
+	    var reverse = new TWEEN.Tween(pos.finish).to(pos.reverse, speed/2)
 		.easing(TWEEN.Easing.Cubic.InOut)
 		.onUpdate(update.reverse);
 
