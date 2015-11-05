@@ -49,7 +49,7 @@ function init() {
     // controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
-    // controls.maxAzimuthAngle	= Math.PI/2.05; // Horizonal Rotate Right
+    // controls.maxAzimuthAngle	= Math.PI/1.05; // Horizonal Rotate Right
 
     /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
@@ -123,6 +123,7 @@ function constructCSS(replay) {
 	div[setCSS[i]].position.y = -30;
 	div[setCSS[i]].position.z = 40;
 
+	div[setCSS[i]].rotation.z = -Math.PI/1.05;
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
 	sceneCSS.add(div[setCSS[i]]);
@@ -154,28 +155,31 @@ function animateCSS(item, div, replay) {
     	speed = speed + (speed/7);
 	var objName = 'cmLoading_frames';
 	var pos = {
-	    moveStart:		{x:0, y:-30, z:60},
+	    moveStart:		{x:0, y:-30, z:10},
 	    moveFinish:		{x:0, y:-30, z:-45},
-	    rotateStart:	{x:-Math.PI/1.09, y:0, z:0},
-	    rotateFinish:	{x:-Math.PI/1.09, y:0, z:5}
+	    // rotateStart:	{x:-Math.PI/1.09, y:0, z:0},
+	    // rotateFinish:	{x:-Math.PI/1.09, y:0, z:0}
 	};
 	
 	setTimeout(function() {
 	    var update = {
-		moveOut:	function(){ div[item].position.z = pos.moveStart.z; },
-		rotation:	function(){ div[item].rotation.z = pos.rotateStart.z; }
+		moveOut:	function(){ div[item].position.z = pos.moveStart.z; }
+		// rotation:	function(){ div[item].rotation.z = pos.rotateStart.z; }
 	    };
 	    var moveOut = new TWEEN.Tween(pos.moveStart).to(pos.moveFinish, speed)
 		.easing(TWEEN.Easing.Quadratic.Out)
 		.onUpdate(update.moveOut)
 		.start();
 
-	    var rotation = new TWEEN.Tween(pos.rotateStart).to(pos.rotateFinish, speed)
-		.easing(TWEEN.Easing.Linear.None)
-		.onUpdate(update.rotation)
-		.start();
+	    // var rotation = new TWEEN.Tween(pos.rotateStart).to(pos.rotateFinish, speed)
+	    // 	.easing(TWEEN.Easing.Linear.None)
+	    // 	.onUpdate(update.rotation)
+	    // 	.start();
 
 	    beginAnimation(div[objName]);
+	    setTimeout(function() {
+		div[objName].element.className += ' cmLoading_frames_second';
+	    },1000);
 	}, delay);
 	break;
     case "cmLoading":
