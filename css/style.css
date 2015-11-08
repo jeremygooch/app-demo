@@ -9,7 +9,7 @@
     padding-right: 0;
 }
 #featured .phoneContainer {
-    background-color: #ccc;
+    background-color: #267c9c;
     height: 420px;
     width: 100%;
 }
@@ -73,9 +73,9 @@
     background-size: auto 100%;
     height: 192px; width: 192px;
     cursor: pointer;
-    animation: cmLoading_frames 1s forwards paused steps(24),
+    animation: cmLoading_sprite 1s forwards paused steps(24),
     cmLoading_sprite 2.1s infinite paused steps(24);
-    -webkit-animation: cmLoading_frames 1s forwards paused steps(24),
+    -webkit-animation: cmLoading_sprite 1s forwards paused steps(24),
     cmLoading_sprite 2.1s infinite paused steps(24);
     animation-delay: 0s, 1s;
     -webkit-animation-delay: 0s, 1s;
@@ -84,10 +84,6 @@
 }
 .cmLoading_frames_second { background: url(images/cmLoading_sprite.png) left center no-repeat; }
 
-
-@keyframes cmLoading_frames { 
-    100% { background-position: -4608px; }
-}
 
 @keyframes cmLoading_sprite {
     100% { background-position: -4608px; }

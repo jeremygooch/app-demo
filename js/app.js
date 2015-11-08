@@ -1,14 +1,37 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 
-init();
-initAnim();
+
+var launchAnim = function (start) {
+    if (start) {
+	init();
+	initAnim();
+    }
+};
 
 function init() {
+    container = document.querySelector('.phoneContainer');
+
+
+    /* *********************************************************
+     * CSS Scene Setup
+     ********************************************************* */
+    sceneCSS = new THREE.Scene();
+
+    constructCSS();
+    
+    /* Create the renderer and add it to the container */
+    rendererCSS = new THREE.CSS3DRenderer();
+    rendererCSS.setSize( container.clientWidth, container.clientHeight );
+    rendererCSS.domElement.style.position = 'absolute';
+    rendererCSS.domElement.style.top = 0;
+    // rendererCSS.domElement.appendChild(rendererGL.domElement);
+    // document.querySelector('.phoneContainer').appendChild(rendererCSS.domElement);
+    document.body.appendChild(rendererCSS.domElement);
+
     /* *********************************************************
      * WebGL Scene Setup
      ********************************************************* */
-    container = document.querySelector('.phoneContainer');
 
     sceneGL = new THREE.Scene();
     loader = new THREE.JSONLoader();
@@ -48,8 +71,8 @@ function init() {
     // controls.maxDistance	= 750; // Zoom Out
     // controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
-    // controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
-    // controls.maxAzimuthAngle	= Math.PI/1.05; // Horizonal Rotate Right
+    controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
+    controls.maxAzimuthAngle	= Math.PI/1.05; // Horizonal Rotate Right
 
     /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
@@ -65,22 +88,15 @@ function init() {
     // console.log(sceneGL);
     // camera.lookAt(objects.normal.sceneGL.position);
     
-    /* *********************************************************
-     * CSS Scene Setup
-     ********************************************************* */
-    
-    sceneCSS = new THREE.Scene();
 
-    constructCSS();
-    
-    /* Create the renderer and add it to the container */
-    rendererCSS = new THREE.CSS3DRenderer();
-    rendererCSS.setSize( container.clientWidth, container.clientHeight );
-    rendererCSS.domElement.style.position = 'absolute';
-    rendererCSS.domElement.style.top = 0;
-    // rendererCSS.domElement.appendChild(rendererGL.domElement);
-    // document.querySelector('.phoneContainer').appendChild(rendererCSS.domElement);
-    document.body.appendChild(rendererCSS.domElement);
+
+
+
+
+
+
+
+
 
     /* Set all the sizes initially and on resize*/
     onWindowResize();
@@ -141,7 +157,7 @@ function addElementToScene( geometry, materials  ) {
 }
 
 function animateCSS(item, div, replay) {
-    var speed = 950, delay = !replay ? 650 : 0;
+    var speed = 950, delay = !replay ? 350 : 0;
 
     function beginAnimation(div) {
 	div.element.style['-webkit-animation-duration']		= speed;
