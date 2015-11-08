@@ -8,10 +8,23 @@
     padding-left: 0;
     padding-right: 0;
 }
-#featured .phoneContainer {
+#featured .phoneContainer, #featured .sceneOverlay {
     background-color: #267c9c;
     height: 420px;
     width: 100%;
+}
+.sceneOverlay {
+    margin-bottom: -420px;
+    position: relative;
+    z-index: 9;
+}
+
+.fadeOut {
+    -webkit-transition: opacity 150ms ease-in-out;
+    -moz-transition: opacity 150ms ease-in-out;
+    -ms-transition: opacity 150ms ease-in-out;
+    -o-transition: opacity 150ms ease-in-out;
+    opacity: 0;
 }
 
 @media screen and (max-width: 642px) {

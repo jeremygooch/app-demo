@@ -1,10 +1,14 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
+hideCanvas();
+init();
+initAnim();
 
 var launchAnim = function (start) {
     if (start) {
-	init();
-	initAnim();
+	showCanvas(function() {
+	    onReplay();
+	});
     }
 };
 
@@ -159,7 +163,7 @@ function addElementToScene( geometry, materials  ) {
 }
 
 function animateCSS(item, div, replay) {
-    var speed = 950, delay = !replay ? 1000 : 0;
+    var speed = 950, delay = !replay ? 500 : 0;
 
     function beginAnimation(div) {
 	div.element.style['-webkit-animation-duration']		= speed;
@@ -230,6 +234,23 @@ function animateCSS(item, div, replay) {
     default :
 	break;
     };
+}
+
+function hideCanvas() {
+    var el = document.createElement('div');
+    el.className = 'sceneOverlay';
+    var target = document.querySelector('.phoneContainer');
+
+    target.parentElement.insertBefore(el, target);
+}
+
+function showCanvas(cb) {
+    var target = document.querySelector('.sceneOverlay');
+    target.className += ' fadeOut';
+    // Clear the overlay after it's hidden
+    setTimeout(function() {target.parentElement.removeChild(target); }, 150);
+
+    if (typeof(cb) == "function") { cb(); }
 }
 
 function initAnim() {
