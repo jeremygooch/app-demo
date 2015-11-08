@@ -93,8 +93,8 @@
 }
 .cmLoading_frames_second {
     background: url(images/cmLoading_sprite.png) left center no-repeat;
-    -webkit-animation: cmLoading_sprite 2.1s infinite steps(24);
-    animation: cmLoading_sprite 2.1s infinite steps(24);
+    -webkit-animation: cmLoading_sprite 1s infinite steps(24);
+    animation: cmLoading_sprite 1s infinite steps(24);
 }
 
 

@@ -2,11 +2,11 @@ var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 hideCanvas();
 init();
-initAnim();
 
 var launchAnim = function (start) {
     if (start) {
 	showCanvas(function() {
+	    initAnim();
 	    onReplay();
 	});
     }
