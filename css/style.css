@@ -45,12 +45,12 @@
     background: url(images/cmLoading_glow_frames.png) left center no-repeat;
     background-size: auto 100%;
     cursor: pointer;
-    animation: cmLoading 1s ease-out forwards paused,
-    cmLoading_glow_frames .5s infinite paused steps(5);
     -webkit-animation: cmLoading 1s ease-out forwards paused,
     cmLoading_glow_frames .5s infinite paused steps(5);
-    animation-delay: 0s, 1s;
+    animation: cmLoading 1s ease-out forwards paused,
+    cmLoading_glow_frames .5s infinite paused steps(5);
     -webkit-animation-delay: 0s, 1s;
+    animation-delay: 0s, 1s;
     z-index: 1;
 }
 
@@ -73,16 +73,16 @@
     background-size: auto 100%;
     height: 192px; width: 192px;
     cursor: pointer;
-    animation: cmLoading_sprite 1s forwards paused steps(24),
-    cmLoading_sprite 2.1s infinite paused steps(24);
-    -webkit-animation: cmLoading_sprite 1s forwards paused steps(24),
-    cmLoading_sprite 2.1s infinite paused steps(24);
-    animation-delay: 0s, 1s;
-    -webkit-animation-delay: 0s, 1s;
+    -webkit-animation: cmLoading_sprite 1s paused steps(24);
+    animation: cmLoading_sprite 1s forwards paused steps(24);
     z-index: 1;
     opacity: 100;
 }
-.cmLoading_frames_second { background: url(images/cmLoading_sprite.png) left center no-repeat; }
+.cmLoading_frames_second {
+    background: url(images/cmLoading_sprite.png) left center no-repeat;
+    -webkit-animation: cmLoading_sprite 2.1s infinite steps(24);
+    animation: cmLoading_sprite 2.1s infinite steps(24);
+}
 
 
 @keyframes cmLoading_sprite {

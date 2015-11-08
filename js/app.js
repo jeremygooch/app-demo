@@ -1,7 +1,6 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 
-
 var launchAnim = function (start) {
     if (start) {
 	init();
@@ -85,6 +84,9 @@ function init() {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
+    
+    
+
     // console.log(sceneGL);
     // camera.lookAt(objects.normal.sceneGL.position);
     
@@ -157,7 +159,7 @@ function addElementToScene( geometry, materials  ) {
 }
 
 function animateCSS(item, div, replay) {
-    var speed = 950, delay = !replay ? 350 : 0;
+    var speed = 950, delay = !replay ? 1000 : 0;
 
     function beginAnimation(div) {
 	div.element.style['-webkit-animation-duration']		= speed;
@@ -173,28 +175,20 @@ function animateCSS(item, div, replay) {
 	var pos = {
 	    moveStart:		{x:0, y:-30, z:10},
 	    moveFinish:		{x:0, y:-30, z:-45},
-	    // rotateStart:	{x:-Math.PI/1.09, y:0, z:0},
-	    // rotateFinish:	{x:-Math.PI/1.09, y:0, z:0}
 	};
 	
 	setTimeout(function() {
 	    var update = {
 		moveOut:	function(){ div[item].position.z = pos.moveStart.z; }
-		// rotation:	function(){ div[item].rotation.z = pos.rotateStart.z; }
 	    };
 	    var moveOut = new TWEEN.Tween(pos.moveStart).to(pos.moveFinish, speed)
 		.easing(TWEEN.Easing.Quadratic.Out)
 		.onUpdate(update.moveOut)
 		.start();
 
-	    // var rotation = new TWEEN.Tween(pos.rotateStart).to(pos.rotateFinish, speed)
-	    // 	.easing(TWEEN.Easing.Linear.None)
-	    // 	.onUpdate(update.rotation)
-	    // 	.start();
-
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
-		div[objName].element.className += ' cmLoading_frames_second';
+	    	div[objName].element.className += ' cmLoading_frames_second';
 	    },1000);
 	}, delay);
 	break;
