@@ -15,12 +15,10 @@ var launchAnim = function (start) {
 function init() {
     container = document.querySelector('.phoneContainer');
 
-
     /* *********************************************************
      * CSS Scene Setup
      ********************************************************* */
     sceneCSS = new THREE.Scene();
-
     constructCSS();
     
     /* Create the renderer and add it to the container */
@@ -28,14 +26,14 @@ function init() {
     rendererCSS.setSize( container.clientWidth, container.clientHeight );
     rendererCSS.domElement.style.position = 'absolute';
     rendererCSS.domElement.style.top = 0;
-    // rendererCSS.domElement.appendChild(rendererGL.domElement);
-    // document.querySelector('.phoneContainer').appendChild(rendererCSS.domElement);
+    rendererCSS.domElement.className += ' css3dobject';
+
     document.body.appendChild(rendererCSS.domElement);
+    
 
     /* *********************************************************
      * WebGL Scene Setup
      ********************************************************* */
-
     sceneGL = new THREE.Scene();
     loader = new THREE.JSONLoader();
     clock = new THREE.Clock;
@@ -69,13 +67,15 @@ function init() {
     camera.position.set( 300, 0, -500 ); // (z/depth, y/up-down, x/left-right)
 
     /* Setup the input controls and constrict their movement accordingly */
-    controls = new THREE.OrbitControls( camera, rendererGL.domElement );
+    controls = new THREE.OrbitControls( camera, rendererCSS.domElement );
+
+
     // controls.minDistance	= 500; // Zoom In
     // controls.maxDistance	= 750; // Zoom Out
     // controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
-    controls.minAzimuthAngle	= 0; // Horizontal Rotate Left
-    controls.maxAzimuthAngle	= Math.PI/1.05; // Horizonal Rotate Right
+    // controls.minAzimuthAngle	= 1.25; // Horizontal Rotate Left
+    // controls.maxAzimuthAngle	= 3.14; // Horizonal Rotate Right
 
     /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
@@ -87,22 +87,6 @@ function init() {
     for (var i=0; i<setGL.length; i++) {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
-
-    
-    
-
-    // console.log(sceneGL);
-    // camera.lookAt(objects.normal.sceneGL.position);
-    
-
-
-
-
-
-
-
-
-
 
     /* Set all the sizes initially and on resize*/
     onWindowResize();
@@ -142,7 +126,7 @@ function constructCSS(replay) {
 	div[setCSS[i]].name = setCSS[i];
 
 	div[setCSS[i]].position.x = 0;
-	div[setCSS[i]].position.y = -30;
+	div[setCSS[i]].position.y = 10;
 	div[setCSS[i]].position.z = 40;
 
 	div[setCSS[i]].rotation.z = -Math.PI/1.05;

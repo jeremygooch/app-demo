@@ -1,3 +1,5 @@
+.css3dobject { top: 45px !important; }
+
 .fullwidth {
    width: 100%;
    margin-left: auto;
@@ -26,6 +28,7 @@
     -o-transition: opacity 150ms ease-in-out;
     opacity: 0;
 }
+
 
 @media screen and (max-width: 642px) {
     #featured .phoneContainer { height: 100vh; }
@@ -96,6 +99,7 @@
     -webkit-animation: cmLoading_sprite 1s infinite steps(24);
     animation: cmLoading_sprite 1s infinite steps(24);
 }
+
 
 
 @keyframes cmLoading_sprite {
