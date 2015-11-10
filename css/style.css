@@ -61,6 +61,12 @@
 .replayBtn:hover { opacity: .75; }
 
 /* JS will be used to set animation timing */
+.security {
+    border: 1px solid red;
+    height: 25px;
+    width: 55px;
+    
+}
 .cmLoading {
     background: url(images/cmLoading_glow_frames.png) left center no-repeat;
     background-size: auto 100%;

@@ -106,7 +106,7 @@ function onReplay() {
 };
 
 function constructCSS(replay) {
-    var setCSS = ['cmLoading','cmLoading_frames'];
+    var setCSS = ['cmLoading','cmLoading_frames','security'];
 
     /* Destroy all previous css elements */
     var selectedObj;
@@ -157,6 +157,29 @@ function animateCSS(item, div, replay) {
     }
 
     switch (item) {
+    case "security":
+	delay = 1000 + delay + 450;
+	var objName = 'security';
+	var pos = {
+	    moveStart:		{x:0, y:-30, z:10},
+	    moveFinish:		{x:0, y:-30, z:-45},
+	};
+	setTimeout(function() {
+	    var update = {
+		moveOut:	function(){ div[item].position.z = pos.moveStart.z; }
+	    };
+	    var moveOut = new TWEEN.Tween(pos.moveStart).to(pos.moveFinish, speed)
+		.easing(TWEEN.Easing.Quadratic.Out)
+		.onUpdate(update.moveOut)
+		.start();
+
+	    beginAnimation(div[objName]);
+	    setTimeout(function() {
+	    	div[objName].element.className += ' cmLoading_frames_second';
+	    },1000);
+	}, delay);
+	
+	break;
     case "cmLoading_frames":
     	speed = speed + (speed/7);
 	var objName = 'cmLoading_frames';
