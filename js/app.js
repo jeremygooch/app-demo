@@ -1,5 +1,7 @@
 var container, stats, controls;
-var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
+var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light, spline;
+var beginFeatureAnim, featureDelay = 2*1000;
+var capture3Dobj;
 hideCanvas();
 init();
 
@@ -88,6 +90,51 @@ function init() {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
+    // ////////////////////////////////////////
+
+
+
+
+
+
+    // smooth my curve over this many points
+    var numPoints = 50;
+
+    spline = new THREE.CatmullRomCurve3([
+	new THREE.Vector3(0, 0, 0),
+	new THREE.Vector3(0, 40, -120),
+	new THREE.Vector3(0, 145, -155)
+    ]);
+
+
+    var material = new THREE.LineBasicMaterial({
+	color: 0xff00f0,
+    });
+
+    var geometry = new THREE.Geometry();
+    var splinePoints = spline.getPoints(numPoints);
+
+    for(var i = 0; i < splinePoints.length; i++){
+	geometry.vertices.push(splinePoints[i]);  
+    }
+
+    var line = new THREE.Line(geometry, material);
+
+    // Hide the line
+    // line.material.opacity = 0;
+    // line.material.transparent = true;
+    // line.material.visible = false;
+
+    sceneGL.add(line);
+
+
+
+
+
+
+
+    // ////////////////////////////////////////
+
     /* Set all the sizes initially and on resize*/
     onWindowResize();
     window.addEventListener( 'resize', onWindowResize, false );
@@ -132,6 +179,12 @@ function constructCSS(replay) {
 	div[setCSS[i]].rotation.z = -Math.PI/1.05;
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
+
+
+	capture3Dobj = div[setCSS[i]];
+
+	
+	
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
     }
@@ -160,23 +213,13 @@ function animateCSS(item, div, replay) {
     case "security":
 	delay = 1000 + delay + 450;
 	var objName = 'security';
-	var pos = {
-	    moveStart:		{x:0, y:-30, z:10},
-	    moveFinish:		{x:0, y:-30, z:-45},
-	};
+	if (replay) { beginFeatureAnim = false; } // reset the feature box animation
 	setTimeout(function() {
-	    var update = {
-		moveOut:	function(){ div[item].position.z = pos.moveStart.z; }
-	    };
-	    var moveOut = new TWEEN.Tween(pos.moveStart).to(pos.moveFinish, speed)
-		.easing(TWEEN.Easing.Quadratic.Out)
-		.onUpdate(update.moveOut)
-		.start();
-
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
-	    	div[objName].element.className += ' cmLoading_frames_second';
-	    },1000);
+		beginFeatureAnim = true;
+	    	div[objName].element.className += ' security_animation';
+	    }, featureDelay);
 	}, delay);
 	
 	break;
@@ -273,4 +316,41 @@ function initAnim() {
 function render() {
     rendererCSS.render(sceneCSS, camera);
     rendererGL.render( sceneGL, camera );
+
+
+
+
+
+
+    // //////////////////////////
+
+
+    if (beginFeatureAnim) {
+	// Try Animate Camera Along Spline
+	var time = Date.now();
+	var looptime = featureDelay;
+	var t = ( time % looptime ) / looptime;
+
+	var pos = spline.getPointAt( t );
+
+	// Stop the animation after certain distance
+	if (pos.z < -150) { beginFeatureAnim = false; }
+	
+	// interpolation
+	var segments = spline.length;
+	var pickt = t * segments;
+	var pick = Math.floor( pickt );
+	var pickNext = ( pick + 1 ) % segments;
+
+	var dir = spline.getTangentAt( t );
+
+	var offset = 15;
+
+	var security = document.querySelector('.security');
+	capture3Dobj.position.copy( pos );
+    }
+    
+
+
+    // //////////////////////////
 }
