@@ -1,6 +1,6 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light, spline;
-var beginFeatureAnim, featureDelay = 2*1000;
+var beginFeatureAnim, featureDelay = 1500;
 var capture3Dobj;
 hideCanvas();
 init();
@@ -121,9 +121,9 @@ function init() {
     var line = new THREE.Line(geometry, material);
 
     // Hide the line
-    // line.material.opacity = 0;
-    // line.material.transparent = true;
-    // line.material.visible = false;
+    line.material.opacity = 0;
+    line.material.transparent = true;
+    line.material.visible = false;
 
     sceneGL.add(line);
 
@@ -179,11 +179,11 @@ function constructCSS(replay) {
 	div[setCSS[i]].rotation.z = -Math.PI/1.05;
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
-
+	if (setCSS[i] == 'security') {
+	    div[setCSS[i]].rotation.z = 0;
+	}
 
 	capture3Dobj = div[setCSS[i]];
-
-	
 	
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
@@ -211,7 +211,8 @@ function animateCSS(item, div, replay) {
 
     switch (item) {
     case "security":
-	delay = 1000 + delay + 450;
+	// Begin the security box slide out
+	delay = delay - 650;
 	var objName = 'security';
 	if (replay) { beginFeatureAnim = false; } // reset the feature box animation
 	setTimeout(function() {
@@ -219,7 +220,7 @@ function animateCSS(item, div, replay) {
 	    setTimeout(function() {
 		beginFeatureAnim = true;
 	    	div[objName].element.className += ' security_animation';
-	    }, featureDelay);
+	    }, featureDelay - 250);
 	}, delay);
 	
 	break;

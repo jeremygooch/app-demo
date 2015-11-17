@@ -62,14 +62,19 @@
 
 /* JS will be used to set animation timing */
 .security {
-    border: 1px solid red;
-    height: 55px;
-    width: 155px;
+    background: transparent url(images/security.png) top left no-repeat;
+    background-size: 100% auto;
+    height: 64px;
+    width: 228px;
+    cursor: pointer;
     opacity: 0;
 }
+.security:hover {
+    opacity: 1;
+}
 .security_animation {
-    -webkit-animation: fadeIn 350ms ease-out forwards;
-    animation: fadeIn 350ms ease-out forwards;
+    -webkit-animation: fadeIn75 350ms ease-out forwards;
+    animation: fadeIn75 350ms ease-out forwards;
 }
 
 .cmLoading {
@@ -89,6 +94,10 @@
 @keyframes fadeIn { 
   from { opacity: 0; }
   to { opacity: 1; }
+}
+@keyframes fadeIn75 { 
+  from { opacity: 0; }
+  to { opacity: .75; }
 }
 
 @keyframes cmLoading { 
