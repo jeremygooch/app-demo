@@ -1,7 +1,9 @@
 var container, stats, controls;
-var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light, spline;
+var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
+var splinePerformance, splineSecurity;
 var beginFeatureAnim, featureDelay = 1500;
-var capture3Dobj;
+// var security, performance;
+var globals = {};
 hideCanvas();
 init();
 
@@ -90,42 +92,63 @@ function init() {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
-    // ////////////////////////////////////////
 
-
-
-
-
-
-    // smooth my curve over this many points
+    
+    // smooth the curve over this many points
     var numPoints = 50;
-
-    spline = new THREE.CatmullRomCurve3([
-	new THREE.Vector3(0, 0, 0),
-	new THREE.Vector3(0, 40, -120),
-	new THREE.Vector3(0, 145, -155)
-    ]);
-
 
     var material = new THREE.LineBasicMaterial({
 	color: 0xff00f0,
     });
 
-    var geometry = new THREE.Geometry();
-    var splinePoints = spline.getPoints(numPoints);
+    // Add Security spline
+    splineSecurity = new THREE.CatmullRomCurve3([
+	new THREE.Vector3(0, 0, 0),
+	new THREE.Vector3(0, 40, -120),
+	new THREE.Vector3(0, 145, -155)
+    ]);
 
-    for(var i = 0; i < splinePoints.length; i++){
-	geometry.vertices.push(splinePoints[i]);  
+    var geometrySecurity = new THREE.Geometry();
+    var securityPoints = splineSecurity.getPoints(numPoints);
+
+    for(var i = 0; i < securityPoints.length; i++){
+	geometrySecurity.vertices.push(securityPoints[i]);
     }
 
-    var line = new THREE.Line(geometry, material);
+    var lineSecurity = new THREE.Line(geometrySecurity, material);
+
+
+
+    // Add Performance spline
+    splinePerformance = new THREE.CatmullRomCurve3([
+	new THREE.Vector3(0, 0, 0),
+	new THREE.Vector3(0, -30, -90),
+	new THREE.Vector3(10, 45, -125)
+    ]);
+
+
+    var geometryPerformance = new THREE.Geometry();
+    var performancePoints = splinePerformance.getPoints(numPoints);
+
+    for(var i = 0; i < performancePoints.length; i++){
+	geometryPerformance.vertices.push(performancePoints[i]);
+    }
+
+    var performanceMaterial = new THREE.LineBasicMaterial({
+	color: 0xff00f0,
+    });
+
+    var linePerformance = new THREE.Line(geometryPerformance, performanceMaterial);
+
+    
 
     // Hide the line
-    line.material.opacity = 0;
-    line.material.transparent = true;
-    line.material.visible = false;
+    lineSecurity.material.opacity = 0;
+    lineSecurity.material.transparent = true;
+    lineSecurity.material.visible = false;
 
-    sceneGL.add(line);
+    sceneGL.add(lineSecurity);
+    sceneGL.add(linePerformance);
 
 
 
@@ -153,7 +176,7 @@ function onReplay() {
 };
 
 function constructCSS(replay) {
-    var setCSS = ['cmLoading','cmLoading_frames','security'];
+    var setCSS = ['cmLoading','cmLoading_frames','security','performance'];
 
     /* Destroy all previous css elements */
     var selectedObj;
@@ -176,15 +199,11 @@ function constructCSS(replay) {
 	div[setCSS[i]].position.y = 10;
 	div[setCSS[i]].position.z = 40;
 
-	div[setCSS[i]].rotation.z = -Math.PI/1.05;
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
-	if (setCSS[i] == 'security') {
-	    div[setCSS[i]].rotation.z = 0;
-	}
+	if (setCSS[i] == 'security') { globals.security = div[setCSS[i]]; }
+	else if (setCSS[i] == 'performance') { globals.performance = div[setCSS[i]]; }
 
-	capture3Dobj = div[setCSS[i]];
-	
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
     }
@@ -220,6 +239,20 @@ function animateCSS(item, div, replay) {
 	    setTimeout(function() {
 		beginFeatureAnim = true;
 	    	div[objName].element.className += ' security_animation';
+	    }, featureDelay - 250);
+	}, delay);
+	
+	break;
+    case "performance":
+	// Begin the performance box slide out
+	delay = delay - 350;
+	var objName = 'performance';
+	if (replay) { beginFeatureAnim = false; } // reset the feature box animation
+	setTimeout(function() {
+	    beginAnimation(div[objName]);
+	    setTimeout(function() {
+		beginFeatureAnim = true;
+	    	div[objName].element.className += ' performance_animation';
 	    }, featureDelay - 250);
 	}, delay);
 	
@@ -319,36 +352,24 @@ function render() {
     rendererGL.render( sceneGL, camera );
 
 
-
-
-
-
     // //////////////////////////
 
 
     if (beginFeatureAnim) {
-	// Try Animate Camera Along Spline
+	// Animate Camera Along the Spline
 	var time = Date.now();
 	var looptime = featureDelay;
 	var t = ( time % looptime ) / looptime;
 
-	var pos = spline.getPointAt( t );
+	var securityPos = splineSecurity.getPointAt( t );
+	var performancePos = splinePerformance.getPointAt( t );
 
 	// Stop the animation after certain distance
-	if (pos.z < -150) { beginFeatureAnim = false; }
+	if (securityPos.z < -150) { beginFeatureAnim = false; }
+	if (performancePos.z < -150) { beginFeatureAnim = false; }
 	
-	// interpolation
-	var segments = spline.length;
-	var pickt = t * segments;
-	var pick = Math.floor( pickt );
-	var pickNext = ( pick + 1 ) % segments;
-
-	var dir = spline.getTangentAt( t );
-
-	var offset = 15;
-
-	var security = document.querySelector('.security');
-	capture3Dobj.position.copy( pos );
+	globals.security.position.copy( securityPos );
+	globals.performance.position.copy( performancePos );
     }
     
 

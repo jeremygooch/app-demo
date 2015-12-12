@@ -72,7 +72,16 @@
 .security:hover {
     opacity: 1;
 }
-.security_animation {
+.performance {
+    background: transparent url(images/security.png) top left no-repeat;
+    background-size: 100% auto;
+    height: 64px;
+    width: 228px;
+    border: 1px solid red;
+    cursor: pointer;
+    opacity: 0;
+}
+.security_animation, .performance_animation {
     -webkit-animation: fadeIn75 350ms ease-out forwards;
     animation: fadeIn75 350ms ease-out forwards;
 }
