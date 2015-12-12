@@ -1,9 +1,18 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
-var splinePerformance, splineSecurity;
-var beginFeatureAnim, featureDelay = 1500;
+// var splinePerformance, splineSecurity;
+var beginFeatureAnim = {}, featureDelay = 1500;
 // var security, performance;
-var globals = {};
+var globals = {
+    three: {
+	security: {
+	    spline: {}
+	},
+	performance: {
+	    spline: {}
+	}
+    }
+};
 hideCanvas();
 init();
 
@@ -102,14 +111,14 @@ function init() {
     });
 
     // Add Security spline
-    splineSecurity = new THREE.CatmullRomCurve3([
+    globals.three.security.spline = new THREE.CatmullRomCurve3([
 	new THREE.Vector3(0, 0, 0),
 	new THREE.Vector3(0, 40, -120),
 	new THREE.Vector3(0, 145, -155)
     ]);
 
     var geometrySecurity = new THREE.Geometry();
-    var securityPoints = splineSecurity.getPoints(numPoints);
+    var securityPoints = globals.three.security.spline.getPoints(numPoints);
 
     for(var i = 0; i < securityPoints.length; i++){
 	geometrySecurity.vertices.push(securityPoints[i]);
@@ -120,7 +129,7 @@ function init() {
 
 
     // Add Performance spline
-    splinePerformance = new THREE.CatmullRomCurve3([
+    globals.three.performance.spline = new THREE.CatmullRomCurve3([
 	new THREE.Vector3(0, 0, 0),
 	new THREE.Vector3(0, -30, -90),
 	new THREE.Vector3(10, 45, -125)
@@ -128,7 +137,7 @@ function init() {
 
 
     var geometryPerformance = new THREE.Geometry();
-    var performancePoints = splinePerformance.getPoints(numPoints);
+    var performancePoints = globals.three.performance.spline.getPoints(numPoints);
 
     for(var i = 0; i < performancePoints.length; i++){
 	geometryPerformance.vertices.push(performancePoints[i]);
@@ -233,11 +242,11 @@ function animateCSS(item, div, replay) {
 	// Begin the security box slide out
 	delay = delay - 650;
 	var objName = 'security';
-	if (replay) { beginFeatureAnim = false; } // reset the feature box animation
+	if (replay) { beginFeatureAnim.security = false; } // reset the feature box animation
 	setTimeout(function() {
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
-		beginFeatureAnim = true;
+		beginFeatureAnim.security = true;
 	    	div[objName].element.className += ' security_animation';
 	    }, featureDelay - 250);
 	}, delay);
@@ -245,15 +254,15 @@ function animateCSS(item, div, replay) {
 	break;
     case "performance":
 	// Begin the performance box slide out
-	delay = delay - 350;
+	delay = delay + 150;
 	var objName = 'performance';
-	if (replay) { beginFeatureAnim = false; } // reset the feature box animation
+	if (replay) { beginFeatureAnim.performance = false; } // reset the feature box animation
 	setTimeout(function() {
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
-		beginFeatureAnim = true;
+		beginFeatureAnim.performance = true;
 	    	div[objName].element.className += ' performance_animation';
-	    }, featureDelay - 250);
+	    }, featureDelay + 50);
 	}, delay);
 	
 	break;
@@ -351,28 +360,27 @@ function render() {
     rendererCSS.render(sceneCSS, camera);
     rendererGL.render( sceneGL, camera );
 
+    var locals = {
+	// Due to the way this is built, there should be an object for each of the global
+	// splines.
+	security: { finalPos: -150 },
+	performance: { finalPos: -120 }
+    };
 
-    // //////////////////////////
+    // Find each spline on its path at this point in time, and assign it
+    // to the equivlant cssobject
+    for (var key in globals.three) {
+	if (beginFeatureAnim[key]) {
+	    var time = Date.now();
+	    var looptime = featureDelay;
+	    var t = ( time % looptime ) / looptime;
 
-
-    if (beginFeatureAnim) {
-	// Animate Camera Along the Spline
-	var time = Date.now();
-	var looptime = featureDelay;
-	var t = ( time % looptime ) / looptime;
-
-	var securityPos = splineSecurity.getPointAt( t );
-	var performancePos = splinePerformance.getPointAt( t );
-
-	// Stop the animation after certain distance
-	if (securityPos.z < -150) { beginFeatureAnim = false; }
-	if (performancePos.z < -150) { beginFeatureAnim = false; }
-	
-	globals.security.position.copy( securityPos );
-	globals.performance.position.copy( performancePos );
+	    // Grab the position of the spline at the proper point in time
+	    locals[key].splinePos = globals.three[key].spline.getPointAt( t );
+	    // Stop the animation after certain distance
+	    if (locals[key].splinePos.z < locals[key].finalPos) { beginFeatureAnim[key] = false; }
+	    // Update the css position
+	    globals[key].position.copy( locals[key].splinePos );
+	}
     }
-    
-
-
-    // //////////////////////////
 }
