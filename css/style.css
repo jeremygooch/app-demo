@@ -85,7 +85,7 @@
     background: transparent url(images/open.png) top left no-repeat;
     background-size: 100% auto;
     height: 64px;
-    width: 228px;
+    width: 100px;
     border: 1px solid green;
     cursor: pointer;
     opacity: 0;

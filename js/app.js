@@ -1,8 +1,13 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 var beginFeatureAnim = {}, featureDelay = 1500;
-var features = ['security', 'performance', 'open'];
-var globals = {};
+var globals = {
+    features: {
+	security:	{ spline: {}, line: {}, geometry: {} },
+	performance:	{ spline: {}, line: {}, geometry: {} },
+	open:		{ spline: {}, line: {}, geometry: {} }
+    }
+};
 hideCanvas();
 init();
 
@@ -95,31 +100,45 @@ function init() {
     
     // smooth the curve over this many points
     var numPoints = 50;
-    globals.features = {};
 
-    // Create the global objects from the features array
-    for (var i=0; i<features.length; i++) {
-	globals.features[features[i]] = {
-	    spline: {},
-	    line: {},
-	    geometry: {}
-	};
-    }
-    
+    // Add New spline
+    globals.features['security'].spline = new THREE.CatmullRomCurve3([
+	// --------------(X,  Y,  Z)
+        new THREE.Vector3(-5, 55, 0),	// Point 1
+        new THREE.Vector3(-5, 60, -120), // Point 2
+        new THREE.Vector3(-5, 158, -155) // Point 3
+    ]);
+    globals.features['performance'].spline = new THREE.CatmullRomCurve3([
+	// --------------(X,  Y,  Z)
+        new THREE.Vector3(0, -10, 0),	// Point 1
+        new THREE.Vector3(5, 18, -120),	// Point 2
+        new THREE.Vector3(15, 75, -155)	// Point 3
+    ]);
+    globals.features['open'].spline = new THREE.CatmullRomCurve3([
+	// --------------(X,  Y,  Z)
+        new THREE.Vector3(5, -15, 0),	// Point 1
+        new THREE.Vector3(25, -20, -120),	// Point 2
+        new THREE.Vector3(55, -35, -155)	// Point 3
+    ]);
+
+    // Yellow
+    globals.features['security'].lineMaterial=new THREE.LineBasicMaterial({ color: 0xf4a919 });
+    // Blue
+    globals.features['performance'].lineMaterial=new THREE.LineBasicMaterial({color:0x4a09db});
+    // Green
+    globals.features['open'].lineMaterial = new THREE.LineBasicMaterial({ color: 0x20db09 });
+
     // Construct the spline, geometry, and line from the objects just created
     for (var key in globals.features) {
 	var obj = globals.features[key];
 
-	
-	obj.geometry = new THREE.Geometry();
 	var points = globals.features[key].spline.getPoints(numPoints);
 
+	obj.geometry = new THREE.Geometry();
 	for(var i = 0; i < points.length; i++){
     	    obj.geometry.vertices.push(points[i]);
 	}
 
-	// Create a line material for assigning to the line geometry
-	obj.lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00f0 });
 	obj.line = new THREE.Line(obj.geometry, obj.lineMaterial);
 
 	// Hide the line
@@ -345,10 +364,9 @@ function render() {
     rendererGL.render( sceneGL, camera );
 
     var locals = {
-	// Due to the way this is built, there should be an object for each of the global splines.
-	security	: { finalPos: -150 },
-	performance	: { finalPos: -110 },
-	open		: { finalPos: -110 }
+	security: {},
+	performance: {},
+	open: {}
     };
 
 
@@ -363,7 +381,10 @@ function render() {
 	    // Grab the position of the spline at the proper point in time
 	    locals[key].splinePos = globals.features[key].spline.getPointAt( t );
 	    // Stop the animation after certain distance
-	    if (locals[key].splinePos.z < locals[key].finalPos) { beginFeatureAnim[key] = false; }
+	    var points = globals.features[key].spline.points;
+	    var buffer = points[points.length-1].z + 5;
+	    if (locals[key].splinePos.z < buffer) { beginFeatureAnim[key] = false; }
+
 	    // Update the css position
 	    globals[key].position.copy( locals[key].splinePos );
 	}
