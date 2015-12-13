@@ -9,6 +9,7 @@ var globals = {
 	customizable:	{ spline: {}, line: {}, geometry: {} }
     }
 };
+
 hideCanvas();
 init();
 
@@ -105,27 +106,27 @@ function init() {
     // Add New spline
     globals.features['security'].spline = new THREE.CatmullRomCurve3([
 	// --------------(X,  Y,  Z)
-        new THREE.Vector3(-5, 55, 0),	// Point 1
-        new THREE.Vector3(-5, 60, -120), // Point 2
-        new THREE.Vector3(-5, 158, -155) // Point 3
+        new THREE.Vector3(-5, 55, 0),		// Point 1
+        new THREE.Vector3(-5, 60, -120),	// Point 2
+        new THREE.Vector3(-5, 148, -155)	// Point 3
     ]);
     globals.features['performance'].spline = new THREE.CatmullRomCurve3([
 	// --------------(X,  Y,  Z)
-        new THREE.Vector3(0, -10, 0),	// Point 1
-        new THREE.Vector3(5, 18, -120),	// Point 2
-        new THREE.Vector3(15, 75, -155)	// Point 3
+        new THREE.Vector3(0, -10, 0),		// Point 1
+        new THREE.Vector3(5, 10, -120),		// Point 2
+        new THREE.Vector3(15, 20, -155)		// Point 3
     ]);
     globals.features['open'].spline = new THREE.CatmullRomCurve3([
 	// --------------(X,  Y,  Z)
-        new THREE.Vector3(5, -15, 0),	// Point 1
-        new THREE.Vector3(25, -20, -120),	// Point 2
-        new THREE.Vector3(55, -35, -155)	// Point 3
+        new THREE.Vector3(5, -15, 0),		// Point 1
+        new THREE.Vector3(25, -30, -80),	// Point 2
+        new THREE.Vector3(55, -115, -155)	// Point 3
     ]);
     globals.features['customizable'].spline = new THREE.CatmullRomCurve3([
 	// --------------(X,  Y,  Z)
-        new THREE.Vector3(-25, -15, 0),	// Point 1
-        new THREE.Vector3(-65, -40, -120),	// Point 2
-        new THREE.Vector3(-105, -35, -155)	// Point 3
+        new THREE.Vector3(-25, -15, 0),		// Point 1
+        new THREE.Vector3(-75, -40, -120),	// Point 2
+        new THREE.Vector3(-105, -110, -175)	// Point 3
     ]);
 
     // Yellow
@@ -151,9 +152,9 @@ function init() {
 	obj.line = new THREE.Line(obj.geometry, obj.lineMaterial);
 
 	// Hide the line
-	// obj.line.material.opacity = 0;
-	// obj.line.material.transparent = true;
-	// obj.line.material.visible = false;
+	obj.line.material.opacity = 0;
+	obj.line.material.transparent = true;
+	obj.line.material.visible = false;
 
 	sceneGL.add(obj.line);
     }
@@ -189,6 +190,7 @@ function constructCSS(replay) {
     var elm = [], div = {};    
     for (var i=0; i<setCSS.length; i++)  {
 	elm[i] = document.createElement('div');
+
 	elm[i].className = setCSS[i];
 
 	/* Turn the div into a three.js oject */
@@ -208,7 +210,17 @@ function constructCSS(replay) {
 
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
+
+    	// Add hover effects (doesn't seem to be working in chrome)
+	elm[i].addEventListener('mouseover', function() { addClass(this, 'feature_hover'); }, false);
+	elm[i].addEventListener('mouseout', function() { removeClass(this, 'feature_hover');}, false);
+
+	elm[i].addEventListener('click', showFeatureInfo, false);
     }
+}
+
+function showFeatureInfo() {
+    console.dir(this);
 }
 
 function addElementToScene( geometry, materials  ) {
@@ -219,6 +231,36 @@ function addElementToScene( geometry, materials  ) {
     mesh.scale.set(55,55,55);
     sceneGL.add(mesh);
 }
+
+
+
+function hasClass(el, className) {
+
+    if (el.classList){
+	return el.classList.contains(className);
+    } else {
+	return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+    }
+}
+
+function addClass(el, className) {
+    if (el.classList) {
+	el.classList.add(className);
+    } else if (!hasClass(el, className)) { el.className += " " + className; }
+}
+
+function removeClass(el, className) {
+    if (el.classList) {
+	el.classList.remove(className);
+    } else if (hasClass(el, className)) {
+	var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+	el.className=el.className.replace(reg, ' ');
+    }
+}
+
+
+
+
 
 function animateCSS(item, div, replay) {
     var speed = 950, delay = !replay ? 500 : 0;
@@ -241,6 +283,7 @@ function animateCSS(item, div, replay) {
 	    setTimeout(function() {
 		beginFeatureAnim.security = true;
 	    	div[objName].element.className += ' feature_animation';
+		document.querySelector('.description span').className += ' desc_animation';
 	    }, featureDelay - 250);
 	}, delay);
 	
@@ -275,7 +318,7 @@ function animateCSS(item, div, replay) {
 	break;
     case "customizable":
 	// Begin the performance box slide out
-	delay = delay + 600;
+	delay = delay + 900;
 	var objName = 'customizable';
 	if (replay) { beginFeatureAnim.customizable= false; } // reset the feature box animation
 	setTimeout(function() {
@@ -283,7 +326,7 @@ function animateCSS(item, div, replay) {
 	    setTimeout(function() {
 		beginFeatureAnim.customizable = true;
 	    	div[objName].element.className += ' feature_animation';
-	    }, featureDelay + 220);
+	    }, featureDelay + 520);
 	}, delay);
 	
 	break;
