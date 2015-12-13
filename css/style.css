@@ -90,7 +90,16 @@
     cursor: pointer;
     opacity: 0;
 }
-.security_animation, .performance_animation, .open_animation {
+.customizable {
+    background: transparent url(images/open.png) top left no-repeat;
+    background-size: 100% auto;
+    height: 64px;
+    width: 100px;
+    border: 1px solid purple;
+    cursor: pointer;
+    opacity: 0;
+}
+.feature_animation {
     -webkit-animation: fadeIn75 350ms ease-out forwards;
     animation: fadeIn75 350ms ease-out forwards;
 }

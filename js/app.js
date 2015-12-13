@@ -5,7 +5,8 @@ var globals = {
     features: {
 	security:	{ spline: {}, line: {}, geometry: {} },
 	performance:	{ spline: {}, line: {}, geometry: {} },
-	open:		{ spline: {}, line: {}, geometry: {} }
+	open:		{ spline: {}, line: {}, geometry: {} },
+	customizable:	{ spline: {}, line: {}, geometry: {} }
     }
 };
 hideCanvas();
@@ -120,6 +121,12 @@ function init() {
         new THREE.Vector3(25, -20, -120),	// Point 2
         new THREE.Vector3(55, -35, -155)	// Point 3
     ]);
+    globals.features['customizable'].spline = new THREE.CatmullRomCurve3([
+	// --------------(X,  Y,  Z)
+        new THREE.Vector3(-25, -15, 0),	// Point 1
+        new THREE.Vector3(-65, -40, -120),	// Point 2
+        new THREE.Vector3(-105, -35, -155)	// Point 3
+    ]);
 
     // Yellow
     globals.features['security'].lineMaterial=new THREE.LineBasicMaterial({ color: 0xf4a919 });
@@ -127,6 +134,8 @@ function init() {
     globals.features['performance'].lineMaterial=new THREE.LineBasicMaterial({color:0x4a09db});
     // Green
     globals.features['open'].lineMaterial = new THREE.LineBasicMaterial({ color: 0x20db09 });
+    // Red
+    globals.features['customizable'].lineMaterial=new THREE.LineBasicMaterial({color:0xe01111});
 
     // Construct the spline, geometry, and line from the objects just created
     for (var key in globals.features) {
@@ -142,11 +151,9 @@ function init() {
 	obj.line = new THREE.Line(obj.geometry, obj.lineMaterial);
 
 	// Hide the line
-	if (key != 'open') {
-	    // obj.line.material.opacity = 0;
-	    // obj.line.material.transparent = true;
-	    // obj.line.material.visible = false;
-	}
+	// obj.line.material.opacity = 0;
+	// obj.line.material.transparent = true;
+	// obj.line.material.visible = false;
 
 	sceneGL.add(obj.line);
     }
@@ -169,7 +176,7 @@ function onReplay() {
 };
 
 function constructCSS(replay) {
-    var setCSS = ['cmLoading','cmLoading_frames','security','performance','open'];
+    var setCSS = ['cmLoading','cmLoading_frames','security','performance','open','customizable'];
 
     /* Destroy all previous css elements */
     var selectedObj;
@@ -197,6 +204,7 @@ function constructCSS(replay) {
 	if (setCSS[i] == 'security') { globals.security = div[setCSS[i]]; }
 	else if (setCSS[i] == 'performance') { globals.performance = div[setCSS[i]]; }
 	else if (setCSS[i] == 'open') { globals.open = div[setCSS[i]]; }
+	else if (setCSS[i] == 'customizable') { globals.customizable = div[setCSS[i]]; }
 
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
@@ -232,7 +240,7 @@ function animateCSS(item, div, replay) {
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
 		beginFeatureAnim.security = true;
-	    	div[objName].element.className += ' security_animation';
+	    	div[objName].element.className += ' feature_animation';
 	    }, featureDelay - 250);
 	}, delay);
 	
@@ -246,7 +254,7 @@ function animateCSS(item, div, replay) {
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
 		beginFeatureAnim.performance = true;
-	    	div[objName].element.className += ' performance_animation';
+	    	div[objName].element.className += ' feature_animation';
 	    }, featureDelay + 20);
 	}, delay);
 	
@@ -260,13 +268,28 @@ function animateCSS(item, div, replay) {
 	    beginAnimation(div[objName]);
 	    setTimeout(function() {
 		beginFeatureAnim.open = true;
-	    	div[objName].element.className += ' open_animation';
+	    	div[objName].element.className += ' feature_animation';
+	    }, featureDelay + 220);
+	}, delay);
+	
+	break;
+    case "customizable":
+	// Begin the performance box slide out
+	delay = delay + 600;
+	var objName = 'customizable';
+	if (replay) { beginFeatureAnim.customizable= false; } // reset the feature box animation
+	setTimeout(function() {
+	    beginAnimation(div[objName]);
+	    setTimeout(function() {
+		beginFeatureAnim.customizable = true;
+	    	div[objName].element.className += ' feature_animation';
 	    }, featureDelay + 220);
 	}, delay);
 	
 	break;
 
 
+	
 
 	
     case "cmLoading_frames":
@@ -366,7 +389,8 @@ function render() {
     var locals = {
 	security: {},
 	performance: {},
-	open: {}
+	open: {},
+	customizable: {}
     };
 
 
