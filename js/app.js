@@ -1,7 +1,7 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 var beginFeatureAnim = {}, featureDelay = 1500;
-var features = ['security', 'performance'];
+var features = ['security', 'performance', 'open'];
 var globals = {};
 hideCanvas();
 init();
@@ -97,6 +97,7 @@ function init() {
     var numPoints = 50;
     globals.features = {};
 
+    // Create the global objects from the features array
     for (var i=0; i<features.length; i++) {
 	globals.features[features[i]] = {
 	    spline: {},
@@ -105,16 +106,9 @@ function init() {
 	};
     }
     
-
+    // Construct the spline, geometry, and line from the objects just created
     for (var key in globals.features) {
 	var obj = globals.features[key];
-	// Add New spline
-	obj.spline = new THREE.CatmullRomCurve3([
-	    new THREE.Vector3(0, 0, 0),
-	    new THREE.Vector3(0, 40, -120),
-	    new THREE.Vector3(0, 145, -155)
-	]);
-
 
 	
 	obj.geometry = new THREE.Geometry();
@@ -126,14 +120,14 @@ function init() {
 
 	// Create a line material for assigning to the line geometry
 	obj.lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00f0 });
-	
 	obj.line = new THREE.Line(obj.geometry, obj.lineMaterial);
-	
 
 	// Hide the line
-	obj.line.material.opacity = 0;
-	obj.line.material.transparent = true;
-	obj.line.material.visible = false;
+	if (key != 'open') {
+	    // obj.line.material.opacity = 0;
+	    // obj.line.material.transparent = true;
+	    // obj.line.material.visible = false;
+	}
 
 	sceneGL.add(obj.line);
     }
@@ -156,7 +150,7 @@ function onReplay() {
 };
 
 function constructCSS(replay) {
-    var setCSS = ['cmLoading','cmLoading_frames','security','performance'];
+    var setCSS = ['cmLoading','cmLoading_frames','security','performance','open'];
 
     /* Destroy all previous css elements */
     var selectedObj;
@@ -183,6 +177,7 @@ function constructCSS(replay) {
 
 	if (setCSS[i] == 'security') { globals.security = div[setCSS[i]]; }
 	else if (setCSS[i] == 'performance') { globals.performance = div[setCSS[i]]; }
+	else if (setCSS[i] == 'open') { globals.open = div[setCSS[i]]; }
 
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
@@ -237,6 +232,24 @@ function animateCSS(item, div, replay) {
 	}, delay);
 	
 	break;
+    case "open":
+	// Begin the performance box slide out
+	delay = delay + 600;
+	var objName = 'open';
+	if (replay) { beginFeatureAnim.open = false; } // reset the feature box animation
+	setTimeout(function() {
+	    beginAnimation(div[objName]);
+	    setTimeout(function() {
+		beginFeatureAnim.open = true;
+	    	div[objName].element.className += ' open_animation';
+	    }, featureDelay + 220);
+	}, delay);
+	
+	break;
+
+
+
+	
     case "cmLoading_frames":
     	speed = speed + (speed/7);
 	var objName = 'cmLoading_frames';
@@ -333,18 +346,20 @@ function render() {
 
     var locals = {
 	// Due to the way this is built, there should be an object for each of the global splines.
-	security: { finalPos: -150 },
-	performance: { finalPos: -120 }
+	security	: { finalPos: -150 },
+	performance	: { finalPos: -110 },
+	open		: { finalPos: -110 }
     };
+
 
     // Find each spline on its path at this point in time, and assign it
     // to the equivlant cssobject
+    var time = Date.now();
+    var looptime = featureDelay;
+    var t = ( time % looptime ) / looptime;
+
     for (var key in globals.features) {
 	if (beginFeatureAnim[key]) {
-	    var time = Date.now();
-	    var looptime = featureDelay;
-	    var t = ( time % looptime ) / looptime;
-
 	    // Grab the position of the spline at the proper point in time
 	    locals[key].splinePos = globals.features[key].spline.getPointAt( t );
 	    // Stop the animation after certain distance

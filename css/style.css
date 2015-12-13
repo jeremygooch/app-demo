@@ -73,7 +73,7 @@
     opacity: 1;
 }
 .performance {
-    background: transparent url(images/security.png) top left no-repeat;
+    background: transparent url(images/performance.png) top left no-repeat;
     background-size: 100% auto;
     height: 64px;
     width: 228px;
@@ -81,7 +81,16 @@
     cursor: pointer;
     opacity: 0;
 }
-.security_animation, .performance_animation {
+.open {
+    background: transparent url(images/open.png) top left no-repeat;
+    background-size: 100% auto;
+    height: 64px;
+    width: 228px;
+    border: 1px solid green;
+    cursor: pointer;
+    opacity: 0;
+}
+.security_animation, .performance_animation, .open_animation {
     -webkit-animation: fadeIn75 350ms ease-out forwards;
     animation: fadeIn75 350ms ease-out forwards;
 }
