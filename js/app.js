@@ -1,18 +1,8 @@
 var container, stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
-// var splinePerformance, splineSecurity;
 var beginFeatureAnim = {}, featureDelay = 1500;
-// var security, performance;
-var globals = {
-    three: {
-	security: {
-	    spline: {}
-	},
-	performance: {
-	    spline: {}
-	}
-    }
-};
+var features = ['security', 'performance'];
+var globals = {};
 hideCanvas();
 init();
 
@@ -105,68 +95,49 @@ function init() {
     
     // smooth the curve over this many points
     var numPoints = 50;
+    globals.features = {};
 
-    var material = new THREE.LineBasicMaterial({
-	color: 0xff00f0,
-    });
-
-    // Add Security spline
-    globals.three.security.spline = new THREE.CatmullRomCurve3([
-	new THREE.Vector3(0, 0, 0),
-	new THREE.Vector3(0, 40, -120),
-	new THREE.Vector3(0, 145, -155)
-    ]);
-
-    var geometrySecurity = new THREE.Geometry();
-    var securityPoints = globals.three.security.spline.getPoints(numPoints);
-
-    for(var i = 0; i < securityPoints.length; i++){
-	geometrySecurity.vertices.push(securityPoints[i]);
+    for (var i=0; i<features.length; i++) {
+	globals.features[features[i]] = {
+	    spline: {},
+	    line: {},
+	    geometry: {}
+	};
     }
-
-    var lineSecurity = new THREE.Line(geometrySecurity, material);
-
-
-
-    // Add Performance spline
-    globals.three.performance.spline = new THREE.CatmullRomCurve3([
-	new THREE.Vector3(0, 0, 0),
-	new THREE.Vector3(0, -30, -90),
-	new THREE.Vector3(10, 45, -125)
-    ]);
-
-
-    var geometryPerformance = new THREE.Geometry();
-    var performancePoints = globals.three.performance.spline.getPoints(numPoints);
-
-    for(var i = 0; i < performancePoints.length; i++){
-	geometryPerformance.vertices.push(performancePoints[i]);
-    }
-
-    var performanceMaterial = new THREE.LineBasicMaterial({
-	color: 0xff00f0,
-    });
-
-    var linePerformance = new THREE.Line(geometryPerformance, performanceMaterial);
-
     
 
-    // Hide the line
-    lineSecurity.material.opacity = 0;
-    lineSecurity.material.transparent = true;
-    lineSecurity.material.visible = false;
-
-    sceneGL.add(lineSecurity);
-    sceneGL.add(linePerformance);
-
-
-
+    for (var key in globals.features) {
+	var obj = globals.features[key];
+	// Add New spline
+	obj.spline = new THREE.CatmullRomCurve3([
+	    new THREE.Vector3(0, 0, 0),
+	    new THREE.Vector3(0, 40, -120),
+	    new THREE.Vector3(0, 145, -155)
+	]);
 
 
+	
+	obj.geometry = new THREE.Geometry();
+	var points = globals.features[key].spline.getPoints(numPoints);
 
+	for(var i = 0; i < points.length; i++){
+    	    obj.geometry.vertices.push(points[i]);
+	}
 
-    // ////////////////////////////////////////
+	// Create a line material for assigning to the line geometry
+	obj.lineMaterial = new THREE.LineBasicMaterial({ color: 0xff00f0 });
+	
+	obj.line = new THREE.Line(obj.geometry, obj.lineMaterial);
+	
 
+	// Hide the line
+	obj.line.material.opacity = 0;
+	obj.line.material.transparent = true;
+	obj.line.material.visible = false;
+
+	sceneGL.add(obj.line);
+    }
+    
     /* Set all the sizes initially and on resize*/
     onWindowResize();
     window.addEventListener( 'resize', onWindowResize, false );
@@ -254,7 +225,7 @@ function animateCSS(item, div, replay) {
 	break;
     case "performance":
 	// Begin the performance box slide out
-	delay = delay + 150;
+	delay = delay + 200;
 	var objName = 'performance';
 	if (replay) { beginFeatureAnim.performance = false; } // reset the feature box animation
 	setTimeout(function() {
@@ -262,7 +233,7 @@ function animateCSS(item, div, replay) {
 	    setTimeout(function() {
 		beginFeatureAnim.performance = true;
 	    	div[objName].element.className += ' performance_animation';
-	    }, featureDelay + 50);
+	    }, featureDelay + 20);
 	}, delay);
 	
 	break;
@@ -361,22 +332,21 @@ function render() {
     rendererGL.render( sceneGL, camera );
 
     var locals = {
-	// Due to the way this is built, there should be an object for each of the global
-	// splines.
+	// Due to the way this is built, there should be an object for each of the global splines.
 	security: { finalPos: -150 },
 	performance: { finalPos: -120 }
     };
 
     // Find each spline on its path at this point in time, and assign it
     // to the equivlant cssobject
-    for (var key in globals.three) {
+    for (var key in globals.features) {
 	if (beginFeatureAnim[key]) {
 	    var time = Date.now();
 	    var looptime = featureDelay;
 	    var t = ( time % looptime ) / looptime;
 
 	    // Grab the position of the spline at the proper point in time
-	    locals[key].splinePos = globals.three[key].spline.getPointAt( t );
+	    locals[key].splinePos = globals.features[key].spline.getPointAt( t );
 	    // Stop the animation after certain distance
 	    if (locals[key].splinePos.z < locals[key].finalPos) { beginFeatureAnim[key] = false; }
 	    // Update the css position
