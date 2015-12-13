@@ -24,6 +24,24 @@
     height: 420px;
     width: 100%;
 }
+.stats_container {
+    position: absolute;
+    right: 10px;
+    height: 50px;
+    z-index: 9;
+    width: 24%;
+    top: 408px;
+}
+div#stats {
+    width: 99% !important;
+}
+div#stats div#fpsGraph {
+    width: 99% !important;
+}
+div#stats div#fpsGraph span {
+    width: 1.348% !important;
+}
+div#fps { background: transparent !important; }
 .description {
     background-color: #267c9c;
     width: 25%;
@@ -33,7 +51,7 @@
 }
 .description span {
     display: block;
-    background: rgba(0,0,0,.75);
+    background: rgba(0,0,0,.25);
     width: 0%;
     height: 2px;
     margin: 206px auto 0;
@@ -97,9 +115,9 @@
     color: #fff;
     opacity: .5;
 }
-.docs { float: left; }
+.docs { float: right; }
 .replayBtn {
-    float: right;
+    float: left;
     cursor: pointer;
 }
 .replayBtn:hover { opacity: .75; }
@@ -116,24 +134,24 @@
 .performance {
     background: transparent url(images/performance.png) top left no-repeat;
     background-size: 100% auto;
-    height: 94px;
-    width: 278px;
+    height: 77px;
+    width: 228px;
     cursor: pointer;
     opacity: 0;
 }
 .open {
     background: transparent url(images/open.png) top left no-repeat;
     background-size: 100% auto;
-    height: 123px;
-    width: 85px;
+    height: 107px;
+    width: 74px;
     cursor: pointer;
     opacity: 0;
 }
 .customizable {
     background: transparent url(images/customizable.png) top left no-repeat;
     background-size: 100% auto;
-    height: 115px;
-    width: 142px;
+    height: 107px;
+    width: 132px;
     cursor: pointer;
     opacity: 0;
 }

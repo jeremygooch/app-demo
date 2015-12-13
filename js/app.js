@@ -57,7 +57,8 @@ function init() {
     stats = new Stats();
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.top = '0px';
-    container.appendChild(stats.domElement);
+    document.querySelector('.stats_container').appendChild(stats.domElement);
+    // container.appendChild(stats.domElement);
 
     container.appendChild(rendererGL.domElement);
 
