@@ -319,7 +319,7 @@ function animateCSS(item, div, replay) {
 	break;
     case "customizable":
 	// Begin the performance box slide out
-	delay = delay + 900;
+	delay = delay + 850;
 	var objName = 'customizable';
 	if (replay) { beginFeatureAnim.customizable= false; } // reset the feature box animation
 	setTimeout(function() {

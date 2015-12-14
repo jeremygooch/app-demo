@@ -24,6 +24,9 @@
     height: 420px;
     width: 100%;
 }
+
+
+/* Begin stats */
 .stats_container {
     position: absolute;
     right: 10px;
@@ -31,23 +34,45 @@
     z-index: 9;
     width: 24%;
     top: 408px;
+    opacity: 0;
+    -webkit-animation: fadeIn 750ms ease-out forwards;
+    animation: fadeIn 750ms ease-out forwards;
+    animation-delay: 3500ms;
+
 }
 div#stats {
     width: 99% !important;
 }
 div#stats div#fpsGraph {
     width: 99% !important;
+    background: rgba(255,255,255,.25) !important;
 }
 div#stats div#fpsGraph span {
     width: 1.348% !important;
+    background: #1d5d76 !important;
+    opacity: 1 !important;
+}
+div#fpsGraph {
+    
 }
 div#fps { background: transparent !important; }
+div#fpsText {
+    text-align: right;
+    color: rgba(255,255,255,.5) !important;
+}
+/* End stats */
+
+
+/* Begin Description */
 .description {
     background-color: #267c9c;
     width: 25%;
     height: 420px;
     position: relative;
     float: right;
+}
+.description * {
+    overflow: hidden;
 }
 .description span {
     display: block;
@@ -77,6 +102,22 @@ div#fps { background: transparent !important; }
 	height: 414px;
     }
 }
+.description h1 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+.description #introduction {
+    padding: 10px;
+    width: 100%;
+}
+.description p {
+    font-size: .85rem;
+    color: rgba(255,255,255,.65);
+    margin-top: 25px;
+}
+/* End Description */
 
 
 
