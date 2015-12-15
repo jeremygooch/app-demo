@@ -108,7 +108,7 @@ div#fpsText {
     font-weight: bold;
     text-align: center;
 }
-.description #introduction {
+.description span div {
     padding: 10px;
     width: 100%;
 }
@@ -145,7 +145,6 @@ div#fpsText {
 /* *********************** */
 /* Canvas Elements         */
 /* *********************** */
-
 .replayBtn, .docs {
     font-size: .75rem;
     display: inline-block;
@@ -191,14 +190,14 @@ div#fpsText {
 .customizable {
     background: transparent url(images/customizable.png) top left no-repeat;
     background-size: 100% auto;
-    height: 107px;
-    width: 132px;
+    height: 100px;
+    width: 123px;
     cursor: pointer;
     opacity: 0;
 }
 .feature_animation {
-    -webkit-animation: fadeIn75 350ms ease-out forwards;
-    animation: fadeIn75 350ms ease-out forwards;
+    -webkit-animation: fadeIn 350ms ease-out forwards;
+    animation: fadeIn 350ms ease-out forwards;
 }
 
 .cmLoading {
@@ -228,9 +227,33 @@ div#fpsText {
   to { opacity: .5; }
 }
 
-.feature_hover, .feature_hover:hover {
-    opacity: 1 !important;
+/* In order to fix a limitation in Chrome, in order to double the opacity of the
+ * the image must be duplicate directly over itself */
+.customizable:hover, .open:hover, .open:hover, .performance:hover, .security:hover {
+    background-image: none !important;
 }
+.feature_hover:hover:before {
+    content: " ";
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+.security.feature_hover:hover:before {
+    background: transparent url(images/security_hover.png) top left no-repeat;
+}
+.performance.feature_hover:hover:before {
+    background: transparent url(images/performance_hover.png) top left no-repeat;
+    background-size: 100% auto;
+}
+.customizable.feature_hover:hover:before {
+    background: url(images/customizable_hover.png) top left no-repeat;
+    background-size: 100% auto;
+}
+.open.feature_hover:hover:before {
+    background: url(images/open_hover.png) top left no-repeat;
+    background-size: 100% auto;
+}
+
 
 
 @keyframes cmLoading { 
@@ -270,3 +293,12 @@ div#fpsText {
 @keyframes cmLoading_sprite {
     100% { background-position: -4608px; }
 }
+
+
+
+
+
+
+/* *********************** */
+/* Cyanogenmod Styling     */
+/* *********************** */

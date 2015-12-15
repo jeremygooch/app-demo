@@ -220,8 +220,20 @@ function constructCSS(replay) {
     }
 }
 
-function showFeatureInfo() {
-    console.dir(this);
+function showFeatureInfo(src) {
+    console.dir(src);
+    var desc = document.querySelector('.description span');
+
+    for (var i=0; i<desc.children.length; i++) { addClass(desc.children[i], 'hide'); }
+    if (src.target.className.indexOf('security') > -1) {
+	removeClass(desc.children.security, 'hide');
+    } else if (src.target.className.indexOf('performance') > -1) {
+	removeClass(desc.children.performance, 'hide');
+    } else if (src.target.className.indexOf('open') > -1) {
+	removeClass(desc.children.open, 'hide');
+    } else if (src.target.className.indexOf('customization') > -1) {
+	removeClass(desc.children.customization, 'hide');
+    }
 }
 
 function addElementToScene( geometry, materials  ) {
