@@ -83,7 +83,7 @@ function init() {
 
     // controls.minDistance	= 500; // Zoom In
     // controls.maxDistance	= 750; // Zoom Out
-    // controls.minPolarAngle	= Math.PI/2; // Vertical Rotate Up
+    controls.minPolarAngle	= Math.PI/2.9; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 1.25; // Horizontal Rotate Left
     // controls.maxAzimuthAngle	= 3.14; // Horizonal Rotate Right
