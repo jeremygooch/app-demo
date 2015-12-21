@@ -204,15 +204,12 @@ function constructCSS(replay) {
 
 	div[setCSS[i]].rotation.x = -Math.PI/1.09;
 
-	if (setCSS[i] == 'security') { globals.security = div[setCSS[i]]; }
-	else if (setCSS[i] == 'performance') { globals.performance = div[setCSS[i]]; }
-	else if (setCSS[i] == 'open') { globals.open = div[setCSS[i]]; }
-	else if (setCSS[i] == 'customizable') { globals.customizable = div[setCSS[i]]; }
+	globals[setCSS[i]] = div[setCSS[i]];
 
 	sceneCSS.add(div[setCSS[i]]);
 	animateCSS(setCSS[i], div, replay);
 
-    	// Add hover effects (doesn't seem to be working in chrome)
+    	// Add hover effects
 	elm[i].addEventListener('mouseover', function() { addClass(this, 'feature_hover'); }, false);
 	elm[i].addEventListener('mouseout', function() { removeClass(this, 'feature_hover');}, false);
 
