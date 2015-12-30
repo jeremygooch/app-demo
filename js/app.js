@@ -7,6 +7,9 @@ var globals = {
 	performance:	{ spline: {}, line: {}, geometry: {} },
 	open:		{ spline: {}, line: {}, geometry: {} },
 	customizable:	{ spline: {}, line: {}, geometry: {} }
+    },
+    controls: {
+	sceneChanged: false
     }
 };
 
@@ -71,11 +74,13 @@ function init() {
     container.appendChild(docs);
     container.appendChild(replayBtn);
 
+    document.querySelector('.css3dobject').addEventListener('mousedown', function() { globals.controls.sceneChanged = true; }, false);
+    
     replayBtn.addEventListener( 'click', onReplay, false );
 
     /* Create and position the camera */
     camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
-    camera.position.set( 300, 0, -500 ); // (z/depth, y/up-down, x/left-right)
+    camera.position.set( 200, 0, -500 ); // (x, y, z)
 
     /* Setup the input controls and constrict their movement accordingly */
     controls = new THREE.OrbitControls( camera, rendererCSS.domElement );
@@ -99,8 +104,6 @@ function init() {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
-
-    
     // smooth the curve over this many points
     var numPoints = 50;
 
@@ -445,6 +448,15 @@ function render() {
 	open: {},
 	customizable: {}
     };
+
+    // Move the camera a bit
+    // Make sure that the user hasn't interacted
+    if (!globals.controls.sceneChanged) {
+	if (camera.position.x < 315) {
+	    camera.position.x += 1.5;
+	    camera.position.z += .25;
+	}
+    }
 
 
     // Find each spline on its path at this point in time, and assign it
