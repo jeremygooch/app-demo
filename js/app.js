@@ -83,6 +83,7 @@ function init() {
     if (window.innerWidth < 650) {
 	// (x, y, z)
 	camera.position.set( 600, 0, -800 );
+	rendererCSS.setSize( globals.container.clientWidth, globals.container.clientHeight * .95 );
     } else {
 	camera.position.set( 200, 0, -500 );
     }
