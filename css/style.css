@@ -24,7 +24,10 @@
     height: 420px;
     width: 100%;
 }
-
+@media (max-width: 650px) {
+    .description, .stats_container { display: none !important; }
+    .quarterWidth { width: 100% !important; }
+}
 
 /* Begin stats */
 .stats_container {
@@ -138,7 +141,7 @@ div#fpsText {
 
 
 @media screen and (max-width: 642px) {
-    #featured .phoneContainer { height: 100vh; }
+    #featured .phoneContainer { height: 95vh; }
 }
 
 

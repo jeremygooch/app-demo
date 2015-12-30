@@ -1,4 +1,4 @@
-var container, stats, controls;
+var stats, controls;
 var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
 var beginFeatureAnim = {}, featureDelay = 1500;
 var globals = {
@@ -26,7 +26,7 @@ var launchAnim = function (start) {
 };
 
 function init() {
-    container = document.querySelector('.phoneContainer');
+    globals.container = document.querySelector('.phoneContainer');
 
     /* *********************************************************
      * CSS Scene Setup
@@ -36,7 +36,7 @@ function init() {
     
     /* Create the renderer and add it to the container */
     rendererCSS = new THREE.CSS3DRenderer();
-    rendererCSS.setSize( container.clientWidth, container.clientHeight );
+    rendererCSS.setSize( globals.container.clientWidth, globals.container.clientHeight );
     rendererCSS.domElement.style.position = 'absolute';
     rendererCSS.domElement.style.top = 0;
     rendererCSS.domElement.className += ' css3dobject';
@@ -61,9 +61,8 @@ function init() {
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.top = '0px';
     document.querySelector('.stats_container').appendChild(stats.domElement);
-    // container.appendChild(stats.domElement);
 
-    container.appendChild(rendererGL.domElement);
+    globals.container.appendChild(rendererGL.domElement);
 
     var replayBtn = document.createElement('div'),
     docs = document.createElement('div');
@@ -71,16 +70,23 @@ function init() {
     docs.className = 'docs';
     replayBtn.innerHTML = 'Replay Intro ->';
     docs.innerHTML = '# Drag the mouse to rotate scene';
-    container.appendChild(docs);
-    container.appendChild(replayBtn);
+    globals.container.appendChild(docs);
+    globals.container.appendChild(replayBtn);
 
     document.querySelector('.css3dobject').addEventListener('mousedown', function() { globals.controls.sceneChanged = true; }, false);
     
     replayBtn.addEventListener( 'click', onReplay, false );
 
     /* Create and position the camera */
-    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
-    camera.position.set( 200, 0, -500 ); // (x, y, z)
+    camera = new THREE.PerspectiveCamera(45, globals.container.clientWidth / globals.container.clientHeight, 1, 10000);
+
+    if (window.innerWidth < 650) {
+	// (x, y, z)
+	camera.position.set( 600, 0, -800 );
+    } else {
+	camera.position.set( 200, 0, -500 );
+    }
+    
 
     /* Setup the input controls and constrict their movement accordingly */
     controls = new THREE.OrbitControls( camera, rendererCSS.domElement );
@@ -169,11 +175,16 @@ function init() {
 }
 
 function onWindowResize() {
-    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.aspect = globals.container.clientWidth / globals.container.clientHeight;
     camera.updateProjectionMatrix();
 
-    rendererGL.setSize(container.clientWidth, container.clientHeight);
-    rendererCSS.setSize(container.clientWidth, container.clientHeight);
+    var containerHeight = globals.container.clientHeight;
+
+    // Resize height for mobile
+    if (window.innerWidth < 650) { containerHeight = globals.container.clientHeight * .95; }
+
+    rendererGL.setSize(globals.container.clientWidth, containerHeight);
+    rendererCSS.setSize(globals.container.clientWidth, containerHeight);
 }
 
 function onReplay() {
