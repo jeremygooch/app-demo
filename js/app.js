@@ -85,7 +85,7 @@ function init() {
 	camera.position.set( 600, 0, -800 );
 	rendererCSS.setSize( globals.container.clientWidth, globals.container.clientHeight * .95 );
     } else {
-	camera.position.set( 200, 0, -500 );
+	camera.position.set( 150, 0, -400 );
     }
     
 
@@ -95,7 +95,7 @@ function init() {
 
     // controls.minDistance	= 500; // Zoom In
     // controls.maxDistance	= 750; // Zoom Out
-    controls.minPolarAngle	= Math.PI/2.9; // Vertical Rotate Up
+    controls.minPolarAngle	= 0; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
     // controls.minAzimuthAngle	= 1.25; // Horizontal Rotate Left
     // controls.maxAzimuthAngle	= 3.14; // Horizonal Rotate Right
@@ -225,26 +225,59 @@ function constructCSS(replay) {
 	animateCSS(setCSS[i], div, replay);
 
     	// Add hover effects
-	elm[i].addEventListener('mouseover', function() { addClass(this, 'feature_hover'); }, false);
-	elm[i].addEventListener('mouseout', function() { removeClass(this, 'feature_hover');}, false);
+	elm[i].addEventListener('mouseover', function() { this.classList.add('feature_hover'); }, false);
+	elm[i].addEventListener('mouseout', function() { this.classList.remove('feature_hover'); }, false);
 
 	elm[i].addEventListener('click', showFeatureInfo, false);
     }
 }
 
 function showFeatureInfo(src) {
-    console.dir(src);
     var desc = document.querySelector('.description span');
+    var intro = document.getElementById('introduction')
 
-    for (var i=0; i<desc.children.length; i++) { addClass(desc.children[i], 'hide'); }
-    if (src.target.className.indexOf('security') > -1) {
-	removeClass(desc.children.security, 'hide');
-    } else if (src.target.className.indexOf('performance') > -1) {
-	removeClass(desc.children.performance, 'hide');
-    } else if (src.target.className.indexOf('open') > -1) {
-	removeClass(desc.children.open, 'hide');
-    } else if (src.target.className.indexOf('customization') > -1) {
-	removeClass(desc.children.customization, 'hide');
+    // Make sure the intro is faded out
+    if (!intro.classList.contains('fadeOut')) {
+	intro.classList.add('fadeOut');
+	intro.addEventListener("animationend", showNextDesc, false);
+    } else {
+	// Fade out the previous text instead
+	for (var i=0; i<desc.children.length; i++) {
+    	    if (desc.children[i].classList.contains('fadeIn')) {
+		desc.children[i].classList.remove('fadeIn');
+		desc.children[i].classList.add('fadeOut');
+		desc.children[i].addEventListener("animationend", showNextDesc, false);
+    	    }
+	}
+    }
+
+
+    function showNextDesc() {
+	for (var i = 0; i<desc.children.length; i++) {
+	    // Hide all previous elements to ensure that they dont stack
+	    desc.children[i].classList.add('hide');
+	    // Detach all previous events
+	    desc.children[i].removeEventListener('animationend', showNextDesc);
+	}
+
+	// Look through each child and add the animation appropriately
+	if (src.target.classList.contains('security')) {
+	    desc.children.security.classList.remove('hide');
+	    desc.children.security.classList.remove('fadeOut');
+	    desc.children.security.classList.add('fadeIn');
+	} else if (src.target.classList.contains('performance')) {
+	    desc.children.performance.classList.remove('hide');
+	    desc.children.performance.classList.remove('fadeOut');
+	    desc.children.performance.classList.add('fadeIn');
+	} else if (src.target.classList.contains('open')) {
+	    desc.children.open.classList.remove('hide');
+	    desc.children.open.classList.remove('fadeOut');
+	    desc.children.open.classList.add('fadeIn');
+	} else if (src.target.classList.contains('customizable')) {
+	    desc.children.customizable.classList.remove('hide');
+	    desc.children.customizable.classList.remove('fadeOut');
+	    desc.children.customizable.classList.add('fadeIn');
+	}
     }
 }
 
@@ -255,32 +288,6 @@ function addElementToScene( geometry, materials  ) {
     // Increase the size since CSS will be at a much larger scale
     mesh.scale.set(55,55,55);
     sceneGL.add(mesh);
-}
-
-
-
-function hasClass(el, className) {
-
-    if (el.classList){
-	return el.classList.contains(className);
-    } else {
-	return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
-    }
-}
-
-function addClass(el, className) {
-    if (el.classList) {
-	el.classList.add(className);
-    } else if (!hasClass(el, className)) { el.className += " " + className; }
-}
-
-function removeClass(el, className) {
-    if (el.classList) {
-	el.classList.remove(className);
-    } else if (hasClass(el, className)) {
-	var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
-	el.className=el.className.replace(reg, ' ');
-    }
 }
 
 
@@ -464,9 +471,9 @@ function render() {
     // Move the camera a bit
     // Make sure that the user hasn't interacted
     if (!globals.controls.sceneChanged) {
-	if (camera.position.x < 315) {
-	    camera.position.x += 1.5;
-	    camera.position.z += .25;
+	if (camera.position.z > -500) {
+	    camera.position.z -= 2;
+	    camera.position.x += 3.25;
 	}
     }
 

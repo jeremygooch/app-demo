@@ -217,6 +217,17 @@ div#fpsText {
     opacity: .85;
 }
 
+.fadeIn {
+    opacity: 0;
+    -webkit-animation: fadeIn 500ms ease-out forwards;
+    animation: fadeIn 500ms ease-out forwards;
+}
+.fadeOut {
+    opacity: 1;
+    -webkit-animation: fadeOut 500ms ease-out forwards;
+    animation: fadeOut 500ms ease-out forwards;
+}
+
 @keyframes fadeIn { 
   from { opacity: 0; }
   to { opacity: 1; }
@@ -228,6 +239,10 @@ div#fpsText {
 @keyframes fadeIn50 { 
   from { opacity: 0; }
   to { opacity: .5; }
+}
+@keyframes fadeOut { 
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 /* In order to fix a limitation in Chrome, in order to double the opacity of the
