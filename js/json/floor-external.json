@@ -19,6 +19,7 @@
         "depthWrite": true,
         "colorEmissive": [0,0,0],
         "colorDiffuse": [0.64,0.64,0.64],
+        "mapDiffuse": "",
         "mapDiffuseAnisotropy": 1,
         "blending": "NormalBlending",
         "opacity": 1,
