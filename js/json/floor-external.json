@@ -19,7 +19,7 @@
         "depthWrite": true,
         "colorEmissive": [0,0,0],
         "colorDiffuse": [0.64,0.64,0.64],
-        "mapDiffuse": "floor.png",
+        "mapDiffuse": "https://s3-us-west-2.amazonaws.com/s.cdpn.io/455915/floor.png",
         "mapDiffuseAnisotropy": 1,
         "blending": "NormalBlending",
         "opacity": 1,
