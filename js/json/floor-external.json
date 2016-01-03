@@ -19,7 +19,7 @@
         "depthWrite": true,
         "colorEmissive": [0,0,0],
         "colorDiffuse": [0.64,0.64,0.64],
-        "mapDiffuse": "//http://jeremygooch.com/libs/smartphone/images/floor.png",
+        "mapDiffuse": "https://raw.githubusercontent.com/jeremygooch/app-demo/master/js/json/floor.png",
         "mapDiffuseAnisotropy": 1,
         "blending": "NormalBlending",
         "opacity": 1,
