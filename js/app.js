@@ -1,5 +1,7 @@
+// Standard ThreeJS scene requires some global variables
 var stats, controls;
-var camera, sceneGL, sceneCSS, rendererGL, rendererCSS, loader, clock, light;
+var camera, sceneGL, rendererGL, loader, clock, light; // WebGL scene objects
+var sceneCSS, rendererCSS; // CSS scene objects
 var beginFeatureAnim = {}, featureDelay = 1500;
 var globals = {
     features: {
@@ -16,16 +18,41 @@ var globals = {
 hideCanvas();
 init();
 
-var launchAnim = function (start) {
-    if (start) {
-	showCanvas(function() {
-	    initAnim();
-	    onReplay();
-	});
+var launchAnim = function () {
+    // Clear the overlay on top of the scene
+    var target = document.querySelector('.sceneOverlay');
+    target.classList.add('fadeOut');
+
+    // Since the object is overlapping the scene, remove it after the animation
+    // so the underlying scene can be interacted with
+    setTimeout(function() {
+        target.parentElement.removeChild(target);
+    }, 150);
+
+    function initAnim() {
+        requestAnimationFrame(initAnim);
+        // Using the elapsed seconds since the last call to the clock update the animtion
+        THREE.AnimationHandler.update( clock.getDelta() );
+
+        render(); // Render the scene 
+
+        // Update the stats, tweening and controls
+        stats.update();
+        TWEEN.update();
+        controls.update();
     }
+    initAnim(); // Initialize the animation
+
+    constructCSS(true); // Create the various css elements
 };
 
 function init() {
+    /*
+     * This funciton is responsible for building and adding the various renderers and 3D
+     * objects used in the scene. It also sets up eventlisteners for interaction as well as
+     * resizing windows.
+     */
+    
     globals.container = document.querySelector('.phoneContainer');
 
     /* *********************************************************
@@ -64,19 +91,6 @@ function init() {
 
     globals.container.appendChild(rendererGL.domElement);
 
-    var replayBtn = document.createElement('div'),
-    docs = document.createElement('div');
-    replayBtn.className = 'replayBtn';
-    docs.className = 'docs';
-    replayBtn.innerHTML = 'Replay Intro ->';
-    docs.innerHTML = '# Drag the mouse to rotate scene';
-    globals.container.appendChild(docs);
-    globals.container.appendChild(replayBtn);
-
-    document.querySelector('.css3dobject').addEventListener('mousedown', function() { globals.controls.sceneChanged = true; }, false);
-    
-    replayBtn.addEventListener( 'click', onReplay, false );
-
     /* Create and position the camera */
     camera = new THREE.PerspectiveCamera(45, globals.container.clientWidth / globals.container.clientHeight, 1, 10000);
 
@@ -91,29 +105,29 @@ function init() {
 
     /* Setup the input controls and constrict their movement accordingly */
     controls = new THREE.OrbitControls( camera, rendererCSS.domElement );
-
-
-    // controls.minDistance	= 500; // Zoom In
-    // controls.maxDistance	= 750; // Zoom Out
     controls.minPolarAngle	= 0; // Vertical Rotate Up
     controls.maxPolarAngle	= Math.PI/2; // Vertical Rotate Down
-    // controls.minAzimuthAngle	= 1.25; // Horizontal Rotate Left
-    // controls.maxAzimuthAngle	= 3.14; // Horizonal Rotate Right
+
 
     /* Create and add the lights*/
     light = new THREE.HemisphereLight( 0xffffff, 0x23799a, 1.6 );
     light.position.set( - 80, 500, 50 );
     sceneGL.add( light );
 
-    var setGL = ['smartphone','floor'];
 
+    // Add the smartphone and floor (shadow) to the scene
+    var setGL = ['smartphone','floor'];
     for (var i=0; i<setGL.length; i++) {
 	loader.load( "js/json/" + setGL[i] + ".json", addElementToScene);
     }
 
+
+
+    /* *********************************************************
+     * Create and add the 4 splines to the scene
+     ********************************************************* */    
     // smooth the curve over this many points
     var numPoints = 50;
-
     // Add New spline
     globals.features['security'].spline = new THREE.CatmullRomCurve3([
 	// --------------(X,  Y,  Z)
@@ -140,13 +154,9 @@ function init() {
         new THREE.Vector3(-105, -110, -175)	// Point 3
     ]);
 
-    // Yellow
     globals.features['security'].lineMaterial=new THREE.LineBasicMaterial({ color: 0xf4a919 });
-    // Blue
     globals.features['performance'].lineMaterial=new THREE.LineBasicMaterial({color:0x4a09db});
-    // Green
     globals.features['open'].lineMaterial = new THREE.LineBasicMaterial({ color: 0x20db09 });
-    // Red
     globals.features['customizable'].lineMaterial=new THREE.LineBasicMaterial({color:0xe01111});
 
     // Construct the spline, geometry, and line from the objects just created
@@ -169,6 +179,26 @@ function init() {
 
 	sceneGL.add(obj.line);
     }
+
+
+    
+    /* *********************************************************
+     * Additional elements and event listeners
+     ********************************************************* */
+
+    var replayBtn = document.createElement('div'),
+    docs = document.createElement('div');
+    replayBtn.className = 'replayBtn';
+    docs.className = 'docs';
+    replayBtn.innerHTML = 'Replay Intro ->';
+    docs.innerHTML = '# Drag the mouse to rotate scene';
+    globals.container.appendChild(docs);
+    globals.container.appendChild(replayBtn);
+
+    document.querySelector('.css3dobject').addEventListener('mousedown', function() { globals.controls.sceneChanged = true; }, false);
+    
+    replayBtn.addEventListener( 'click', constructCSS, false );
+    
     
     /* Set all the sizes initially and on resize*/
     onWindowResize();
@@ -176,23 +206,33 @@ function init() {
 }
 
 function onWindowResize() {
+    /*
+     * This function is responsible for updating the camera's aspect ratio and projection matrix.
+     * It will also update the WebGL and CSS3D renderers. A lower limit is set on the scene
+     * of 650px, and if this limit is reached the height becomes responsive to the window.
+     */
+    
     camera.aspect = globals.container.clientWidth / globals.container.clientHeight;
     camera.updateProjectionMatrix();
 
     var containerHeight = globals.container.clientHeight;
-
-    // Resize height for mobile
-    if (window.innerWidth < 650) { containerHeight = globals.container.clientHeight * .95; }
-
+    
     rendererGL.setSize(globals.container.clientWidth, containerHeight);
     rendererCSS.setSize(globals.container.clientWidth, containerHeight);
+
+    // Resize height for smaller screens
+    if (window.innerWidth < 650) { containerHeight = globals.container.clientHeight * .95; }
 }
 
-function onReplay() {
-    constructCSS(true);
-};
-
 function constructCSS(replay) {
+    /*
+     * This function creates the various html objects in the scene which can be interacted with
+     * and styled appropriately
+     *
+     * @replay[bool]: If the scene needs to be replayed set to true
+     *
+     */
+    
     var setCSS = ['cmLoading','cmLoading_frames','security','performance','open','customizable'];
 
     /* Destroy all previous css elements */
@@ -233,15 +273,24 @@ function constructCSS(replay) {
 }
 
 function showFeatureInfo(src) {
-    var desc = document.querySelector('.description span');
-    var intro = document.getElementById('introduction')
+    /*
+     * This function handles the class switching for cycling through the various
+     * features on the side window each time a feature is clicked in the scene
+     *
+     * @src[click]: The mouse event from the click listener
+     */
 
-    // Make sure the intro is faded out
+    // Get the parent object for each description in the dom
+    var desc = document.querySelector('.description span');
+
+    // Fade out the introduction, if its still present
+    var intro = document.getElementById('introduction');
     if (!intro.classList.contains('fadeOut')) {
 	intro.classList.add('fadeOut');
 	intro.addEventListener("animationend", showNextDesc, false);
     } else {
-	// Fade out the previous text instead
+	// Fade out the each feature description instead so the correct one can be
+        // faded in
 	for (var i=0; i<desc.children.length; i++) {
     	    if (desc.children[i].classList.contains('fadeIn')) {
 		desc.children[i].classList.remove('fadeIn');
@@ -251,8 +300,9 @@ function showFeatureInfo(src) {
 	}
     }
 
-
     function showNextDesc() {
+        // This function simply shows the correct feature after all the other
+        // features are hidden
 	for (var i = 0; i<desc.children.length; i++) {
 	    // Hide all previous elements to ensure that they dont stack
 	    desc.children[i].classList.add('hide');
@@ -260,28 +310,46 @@ function showFeatureInfo(src) {
 	    desc.children[i].removeEventListener('animationend', showNextDesc);
 	}
 
-	// Look through each child and add the animation appropriately
-	if (src.target.classList.contains('security')) {
-	    desc.children.security.classList.remove('hide');
-	    desc.children.security.classList.remove('fadeOut');
-	    desc.children.security.classList.add('fadeIn');
-	} else if (src.target.classList.contains('performance')) {
-	    desc.children.performance.classList.remove('hide');
-	    desc.children.performance.classList.remove('fadeOut');
-	    desc.children.performance.classList.add('fadeIn');
-	} else if (src.target.classList.contains('open')) {
-	    desc.children.open.classList.remove('hide');
-	    desc.children.open.classList.remove('fadeOut');
-	    desc.children.open.classList.add('fadeIn');
-	} else if (src.target.classList.contains('customizable')) {
-	    desc.children.customizable.classList.remove('hide');
-	    desc.children.customizable.classList.remove('fadeOut');
-	    desc.children.customizable.classList.add('fadeIn');
-	}
+	// Update the various features based on which one was clicked
+        var featureClass = src.target.className.split(" ");
+        for(var i=0; i<featureClass.length; i++) {
+            switch(featureClass[i]) {
+            case "security":
+	        desc.children.security.classList.remove('hide');
+	        desc.children.security.classList.remove('fadeOut');
+	        desc.children.security.classList.add('fadeIn');
+                break;
+            case "performance":
+	        desc.children.performance.classList.remove('hide');
+	        desc.children.performance.classList.remove('fadeOut');
+	        desc.children.performance.classList.add('fadeIn');
+                break;
+            case "open":
+	        desc.children.open.classList.remove('hide');
+	        desc.children.open.classList.remove('fadeOut');
+	        desc.children.open.classList.add('fadeIn');
+                break;
+            case "customizable":
+	        desc.children.customizable.classList.remove('hide');
+	        desc.children.customizable.classList.remove('fadeOut');
+	        desc.children.customizable.classList.add('fadeIn');
+                break;
+            default:
+                break;
+            }
+        }
     }
 }
 
 function addElementToScene( geometry, materials  ) {
+    /*
+     * This function is responsible for adding the textures and geometry to the scene
+     *
+     * @geometry[obj]: The 3JS geometry
+     * @materials[arr]: The array of texture objects
+     *
+     */
+
     materials[ 0 ].shading = THREE.FlatShading;
     mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
 
@@ -295,84 +363,59 @@ function addElementToScene( geometry, materials  ) {
 
 
 function animateCSS(item, div, replay) {
+    /*
+     * This function handles queueing up the various CSS animation for the
+     * different html objects
+     *
+     * @item[str]: the name of the feature box that will be animated
+     * @div[obj]: An object containing the various threeJS CSS3D objects
+     * @replay[bool]: Set to true if this is not the initial play through
+     */
+
+    // Set some basic defaults
     var speed = 950, delay = !replay ? 500 : 0;
 
-    function beginAnimation(div) {
+    function beginCSSAnimation(div) {
+        // Update the CSS timing on the item, and start the animations
 	div.element.style['-webkit-animation-duration']		= speed;
 	div.element.style['animation-duration']			= speed;
 	div.element.style['-webkit-animation-play-state']	= 'running';
 	div.element.style['animation-play-state']		= 'running';
     }
 
+    function delayAnimation(itm, d, ftrDelay) {
+        // Stage the CSS animation and the spline animation
+	if (replay) { beginFeatureAnim[itm] = false; } // reset this feature box animation
+	setTimeout(function() {
+	    beginCSSAnimation(div[itm]);
+	    setTimeout(function() {
+		beginFeatureAnim[itm] = true;
+	    	div[itm].element.className += ' feature_animation';
+                if (itm == 'security') { document.querySelector('.description span').className += ' desc_animation'; }
+	    }, ftrDelay);
+	},d);
+    }
+
     switch (item) {
     case "security":
-	// Begin the security box slide out
-	delay = delay - 650;
-	var objName = 'security';
-	if (replay) { beginFeatureAnim.security = false; } // reset the feature box animation
-	setTimeout(function() {
-	    beginAnimation(div[objName]);
-	    setTimeout(function() {
-		beginFeatureAnim.security = true;
-	    	div[objName].element.className += ' feature_animation';
-		document.querySelector('.description span').className += ' desc_animation';
-	    }, featureDelay - 250);
-	}, delay);
-	
+        delayAnimation(item, delay - 650, featureDelay - 250);
 	break;
     case "performance":
-	// Begin the performance box slide out
-	delay = delay + 200;
-	var objName = 'performance';
-	if (replay) { beginFeatureAnim.performance = false; } // reset the feature box animation
-	setTimeout(function() {
-	    beginAnimation(div[objName]);
-	    setTimeout(function() {
-		beginFeatureAnim.performance = true;
-	    	div[objName].element.className += ' feature_animation';
-	    }, featureDelay + 20);
-	}, delay);
-	
+        delayAnimation(item, delay + 200, featureDelay + 20);
 	break;
     case "open":
-	// Begin the performance box slide out
-	delay = delay + 600;
-	var objName = 'open';
-	if (replay) { beginFeatureAnim.open = false; } // reset the feature box animation
-	setTimeout(function() {
-	    beginAnimation(div[objName]);
-	    setTimeout(function() {
-		beginFeatureAnim.open = true;
-	    	div[objName].element.className += ' feature_animation';
-	    }, featureDelay + 220);
-	}, delay);
-	
+        delayAnimation(item, delay + 600, featureDelay + 220);
 	break;
     case "customizable":
-	// Begin the performance box slide out
-	delay = delay + 850;
-	var objName = 'customizable';
-	if (replay) { beginFeatureAnim.customizable= false; } // reset the feature box animation
-	setTimeout(function() {
-	    beginAnimation(div[objName]);
-	    setTimeout(function() {
-		beginFeatureAnim.customizable = true;
-	    	div[objName].element.className += ' feature_animation';
-	    }, featureDelay + 520);
-	}, delay);
-	
+        delayAnimation(item, delay + 850, featureDelay + 520);
 	break;
-
-
-	
-
-	
     case "cmLoading_frames":
+        // Since this is not animated along a spline, but is instad a looping animation
+        // we'll handle it individually
     	speed = speed + (speed/7);
-	var objName = 'cmLoading_frames';
 	var pos = {
-	    moveStart:		{x:0, y:-30, z:10},
-	    moveFinish:		{x:0, y:-30, z:-45},
+	    moveStart:  {x:0, y:-30, z:10},
+	    moveFinish:	{x:0, y:-30, z:-45},
 	};
 	
 	setTimeout(function() {
@@ -384,14 +427,15 @@ function animateCSS(item, div, replay) {
 		.onUpdate(update.moveOut)
 		.start();
 
-	    beginAnimation(div[objName]);
+	    beginCSSAnimation(div[item]);
 	    setTimeout(function() {
-	    	div[objName].element.className += ' cmLoading_frames_second';
+	    	div[item].element.className += ' cmLoading_frames_second';
 	    },1000);
 	}, delay);
 	break;
     case "cmLoading":
-	var objName = 'cmLoading';
+        // Since this is not animated along a spline, but is instad a looping animation
+        // we'll handle it individually
 	var pos = {
 	    start: {x:0, y:-30, z:40},
 	    finish: {x:0, y:-30, z:-40},
@@ -422,7 +466,7 @@ function animateCSS(item, div, replay) {
 	    
 	    flyOut.chain(reverse.chain(finale)).start();
 	    
-	    beginAnimation(div[objName]);
+	    beginCSSAnimation(div[item]);
 	}, delay);
 	break;
     default :
@@ -431,6 +475,11 @@ function animateCSS(item, div, replay) {
 }
 
 function hideCanvas() {
+    /*
+     * As the name indicates, this function is responsible for hiding the
+     * scene. It does this by creating an overlay and placing it before the
+     * scene.
+     */
     var el = document.createElement('div');
     el.className = 'sceneOverlay';
     var target = document.querySelector('.phoneContainer');
@@ -438,26 +487,13 @@ function hideCanvas() {
     target.parentElement.insertBefore(el, target);
 }
 
-function showCanvas(cb) {
-    var target = document.querySelector('.sceneOverlay');
-    target.className += ' fadeOut';
-    // Clear the overlay after it's hidden
-    setTimeout(function() {target.parentElement.removeChild(target); }, 150);
-
-    if (typeof(cb) == "function") { cb(); }
-}
-
-function initAnim() {
-    requestAnimationFrame(initAnim);
-    THREE.AnimationHandler.update( clock.getDelta() );
-
-    render();
-    stats.update();
-    TWEEN.update();
-    controls.update();
-}
-
 function render() {
+    /*
+     * Render the scene using the CSS3DRender and the webGL renderer. Also,
+     * moves the camera along it's path and the various HTML objects along
+     * their spline.
+     */
+    
     rendererCSS.render(sceneCSS, camera);
     rendererGL.render( sceneGL, camera );
 
@@ -468,8 +504,7 @@ function render() {
 	customizable: {}
     };
 
-    // Move the camera a bit
-    // Make sure that the user hasn't interacted
+    // Move the camera a bit if the user hasn't interacted with it.
     if (!globals.controls.sceneChanged) {
 	if (camera.position.z > -500) {
 	    camera.position.z -= 2;
@@ -481,8 +516,7 @@ function render() {
     // Find each spline on its path at this point in time, and assign it
     // to the equivlant cssobject
     var time = Date.now();
-    var looptime = featureDelay;
-    var t = ( time % looptime ) / looptime;
+    var t = ( time % featureDelay ) / featureDelay;
 
     for (var key in globals.features) {
 	if (beginFeatureAnim[key]) {
